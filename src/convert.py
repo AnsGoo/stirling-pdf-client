@@ -1,4 +1,5 @@
 
+from ast import Raise
 from pathlib import Path
 from typing import Optional, Any
 from httpx import Client, Response
@@ -19,32 +20,61 @@ class ConvertApi:
         return resp.text
     
     def pdf_to_xml(self, file_input:Path, fileId:str) -> Any:
+        url = '/api/v1/convert/pdf/xml'
         # 使用二进制模式打开文件，并使用上下文管理器自动关闭
         with open(file_input, 'rb') as file:
             files = {"fileInput": file}
             data = {
                 'fileId': fileId
             }
-            url = '/api/v1/convert/pdf/xml'
+
             resp:Response = self.__client.request(method='POST', url=url, data=data, files=files)
             return resp.json()
         
     
-    def pdf_to_word(self, file_input:Path, out_path:Path,fileId:Optional[str]= None, output_format: Optional[str]='doc') -> str:
+    def pdf_to_word(self,  out_path:Path, file_input:Optional[Path], fileId:Optional[str]= None, output_format: Optional[str]='doc') -> str:
         # 确保output_format只能是'doc'或'docx'
+        
         if output_format not in ['doc', 'docx']:
             raise ValueError("output_format must be either 'doc' or 'docx'")
+
+        if file_input is None  and fileId is None:
+            raise ValueError("file_input and fileId must be provided one of")
         
         # 使用二进制模式打开文件，并使用上下文管理器自动关闭
-        with open(file_input, 'rb') as file:
-            files = {"fileInput": file}
-            data = {
-                'fileId': fileId,
-                "outputFormat": output_format
-            }
-            url = '/api/v1/convert/pdf/word'
-            resp:Response = self.__client.request(method='POST', url=url, data=data, files=files)
-            self._save_file(resp=resp, out_path=out_path)
+        url = '/api/v1/convert/pdf/word'
+        file = None
+        if file_input:
+            file = open(file_input, 'rb')
+        files = {"fileInput": file}
+        data = {
+            'fileId': fileId,
+            "outputFormat": output_format
+        }
+        resp:Response = self.__client.request(method='POST', url=url, data=data, files=files)
+        self._save_file(resp=resp, out_path=out_path)
+        if file:
+            file.close()
+        return resp.status_code
+
+
+    def pdf_to_text(self, out_path:Path, file_input:Optional[Path],fileId:Optional[str]= None, output_format: Optional[str]='rtf') -> str:
+        url = '/api/v1/convert/pdf/text'
+        # 使用二进制模式打开文件，并使用上下文管理器自动关闭
+        if file_input is None  and fileId is None:
+            raise ValueError("file_input and fileId must be provided one of")
+        file = None
+        if file_input:
+            file = open(file_input, 'rb')
+        files = {"fileInput": file}
+        data = {
+            'fileId': fileId,
+            "outputFormat": output_format
+        }
+        resp:Response = self.__client.request(method='POST', url=url, data=data, files=files)
+        self._save_file(resp=resp, out_path=out_path)
+        if file:
+            file.close()
         return resp.status_code
 
 

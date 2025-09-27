@@ -43,6 +43,7 @@ def main():
     client = StirlingPDFClient(base_url='http://192.168.124.18:18080')
     resp = client.convert.pdf_to_word(file_input=Path('./test.pdf'),out_path=Path('./'))
     print(resp)
+    client.convert.pdf_to_text(file_input=Path('./test.pdf'),out_path=Path('./'),output_format='txt')
 
 if __name__ == "__main__":
     main()

@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "stirling-pdf-client",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}

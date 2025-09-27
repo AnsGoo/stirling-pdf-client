@@ -1,0 +1,75 @@
+
+from pathlib import Path
+from typing import Optional, Any
+from httpx import Client, Response
+import re
+import urllib
+
+
+class ConvertApi:
+
+    __client: Client
+    def __init__(self, client:Client) -> None:
+        self.__client = client
+
+    def url_to_pdf(self, urlInput:str) -> str:
+        url = '/api/v1/convert/url/pdf'
+        resp:Response = self.__client.request(method='POST', url=url, data={"urlInput":urlInput})
+
+        return resp.text
+    
+    def pdf_to_xml(self, file_input:Path, fileId:str) -> Any:
+        # 使用二进制模式打开文件，并使用上下文管理器自动关闭
+        with open(file_input, 'rb') as file:
+            files = {"fileInput": file}
+            data = {
+                'fileId': fileId
+            }
+            url = '/api/v1/convert/pdf/xml'
+            resp:Response = self.__client.request(method='POST', url=url, data=data, files=files)
+            return resp.json()
+        
+    
+    def pdf_to_word(self, file_input:Path, out_path:Path,fileId:Optional[str]= None, output_format: Optional[str]='doc') -> str:
+        # 确保output_format只能是'doc'或'docx'
+        if output_format not in ['doc', 'docx']:
+            raise ValueError("output_format must be either 'doc' or 'docx'")
+        
+        # 使用二进制模式打开文件，并使用上下文管理器自动关闭
+        with open(file_input, 'rb') as file:
+            files = {"fileInput": file}
+            data = {
+                'fileId': fileId,
+                "outputFormat": output_format
+            }
+            url = '/api/v1/convert/pdf/word'
+            resp:Response = self.__client.request(method='POST', url=url, data=data, files=files)
+            self._save_file(resp=resp, out_path=out_path)
+        return resp.status_code
+
+
+    def _save_file(self, resp:Response, out_path:Path):
+        target_file = out_path
+        if not out_path.is_file():
+            filename = self._get_filename(resp)
+            target_file = out_path.joinpath(filename)
+        with open(target_file, 'wb') as f:
+            f.write(resp.content)
+
+    def _get_filename(self, resp:Response, default_filename="unkown_filename")-> str:
+        """提取文件名的主方法"""
+        headers = resp.headers
+        content_disposition = headers.get('content-disposition', '')
+        
+        # 从Content-Disposition提取
+        if content_disposition:
+            match = re.search(r'filename\*?=([^;]+)', content_disposition, re.IGNORECASE)
+            if match:
+                filename = match.group(1).strip(' "\'')
+                # 处理编码
+                if filename.startswith("UTF-8''") or filename.startswith("utf-8''"):
+                    filename = urllib.parse.unquote(filename[7:])
+                return re.sub(r'[<>:"/\\|?*]', '_', filename)
+        return default_filename
+
+    

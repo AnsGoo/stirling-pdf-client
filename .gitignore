@@ -10,3 +10,6 @@ wheels/
 .venv
 *.doc
 *.pdf
+*.txt
+*.rtf
+*.xlsx

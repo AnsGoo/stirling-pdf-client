@@ -41,9 +41,13 @@ def debug_info():
 
 def main():
     client = StirlingPDFClient(base_url='http://192.168.124.18:18080')
-    resp = client.convert.pdf_to_word(file_input=Path('./test.pdf'),out_path=Path('./'))
-    print(resp)
+    client.convert.pdf_to_word(file_input=Path('./test.pdf'),out_path=Path('./'))
     client.convert.pdf_to_text(file_input=Path('./test.pdf'),out_path=Path('./'),output_format='txt')
+    client.convert.pdf_to_markdown(out_path=Path("./"), file_input=Path('./test.pdf'))
+    client.convert.pdf_to_pdfa(out_path=Path('./'),file_input=Path('./test.pdf'))
+    client.convert.pdf_to_presentation(out_path=Path('./'),file_input=Path('./test.pdf'))
+    client.convert.pdf_to_img(out_path=Path('./'),file_input=Path('./test.pdf'))
+
 
 if __name__ == "__main__":
     main()

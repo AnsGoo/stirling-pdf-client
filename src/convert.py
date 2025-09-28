@@ -1,7 +1,5 @@
-from ast import List
-from ctypes import Array
 from pathlib import Path
-from typing import Optional, Any,Literal
+from typing import Optional, Any, Literal, List
 from httpx import Client, Response
 import re
 import urllib
@@ -210,10 +208,16 @@ class ConvertApi:
         return resp.status_code
 
     def img_to_pdf(self, out_path:Path, file_input:List[Path],fit_option:Literal['fillPage','fitDocumentToImage','maintainAspectRatio']='fillPage',color_type:Literal['color','greyscale','blackwhite']='color',auto_rotate:Optional[bool]=False) -> str:
-        url = '/api/v1/convert/pdf/html'
+        url = '/api/v1/convert/img/pdf'
         
-        file_list = map(file_input,lambda file: open(file, 'rb'))
-        files = {"fileInput": file_list}
+        # 为每个文件创建一个文件对象
+        files = []
+        opened_files = []
+        for file_path in file_input:
+            file_obj = open(file_path, 'rb')
+            files.append(('fileInput', file_obj))
+            opened_files.append(file_obj)
+        
         data = {
             "fitOption":fit_option,
             "colorType":color_type,
@@ -221,8 +225,12 @@ class ConvertApi:
         }
         resp:Response = self.__client.request(method='POST', url=url, files=files, data=data)
         self._save_file(resp=resp, out_path=out_path)
-        for file in file_list:
-            file.close()
+        
+        # 确保所有文件都被关闭
+        for file in opened_files:
+            if not file.closed:
+                file.close()
+        
         return resp.status_code
 
     def html_to_pdf(self, out_path:Path, file_input:Optional[Path] = None, fileId:Optional[str]= None, zoom:Optional[float]=1.0) -> str:

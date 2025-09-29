@@ -8,8 +8,4 @@ wheels/
 
 # Virtual environments
 .venv
-*.doc
-*.pdf
-*.txt
-*.rtf
-*.xlsx
+mock

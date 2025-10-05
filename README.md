@@ -15,7 +15,7 @@ A Python client for the Stirling PDF API, providing a simple way to interact wit
 You can install the package using pip:
 
 ```bash
-pip install stirling-pdf-client
+pip install stirling_pdf_client
 ```
 
 Or directly from the source:

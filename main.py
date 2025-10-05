@@ -1,25 +1,13 @@
-
 from pathlib import Path
-import sys
-import os
-
-# 将当前项目根目录添加到Python路径，以便可以直接运行而不需要安装包
-sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 
 # 尝试从已安装的包导入，如果失败则从源码导入
-try:
-    from stirling_pdf_client import StirlingPDFClient
-    print("从已安装的包导入成功")
-except ImportError:
-    # 如果包尚未安装，则从源码导入
-    print("提示: 包'stirling_pdf_client'尚未安装在当前Python环境中。正在从源码导入...")
-    print("建议: 运行 'pip install .' 来安装这个包")
-    from src.client import StirlingPDFClient
+from stirling_pdf_client import StirlingPDFClient
+
 
 def debug_info():
     # 初始化客户端，指向您的Stirling PDF服务器
-    client = StirlingPDFClient(base_url='http://192.168.124.18:18080')
-    
+    client = StirlingPDFClient(base_url="http://192.168.124.18:18080")
+
     try:
         # 获取服务器运行时间信息
         uptime_info = client.info.get_uptime()
@@ -40,13 +28,25 @@ def debug_info():
 
 
 def main():
-    client = StirlingPDFClient(base_url='http://192.168.124.18:18080')
-    client.convert.pdf_to_word(file_input=Path('./test.pdf'),out_path=Path('./'))
-    client.convert.pdf_to_text(file_input=Path('./test.pdf'),out_path=Path('./'),output_format='txt')
-    client.convert.pdf_to_markdown(out_path=Path("./"), file_input=Path('./test.pdf'))
-    client.convert.pdf_to_pdfa(out_path=Path('./'),file_input=Path('./test.pdf'))
-    client.convert.pdf_to_presentation(out_path=Path('./'),file_input=Path('./test.pdf'))
-    client.convert.pdf_to_img(out_path=Path('./'),file_input=Path('./test.pdf'))
+    client = StirlingPDFClient(base_url="http://192.168.124.18:18080")
+    client.convert.pdf_to_word(
+        file_input=Path("./mock/test.pdf"), out_path=Path("./mock")
+    )
+    client.convert.pdf_to_text(
+        file_input=Path("./mock/test.pdf"), out_path=Path("./mock"), output_format="txt"
+    )
+    client.convert.pdf_to_markdown(
+        out_path=Path("./mock"), file_input=Path("./mock/test.pdf")
+    )
+    client.convert.pdf_to_pdfa(
+        out_path=Path("./mock"), file_input=Path("./mock/test.pdf")
+    )
+    client.convert.pdf_to_presentation(
+        out_path=Path("./mock"), file_input=Path("./mock/test.pdf")
+    )
+    client.convert.pdf_to_img(
+        out_path=Path("./mock"), file_input=Path("./mock/test.pdf")
+    )
 
 
 if __name__ == "__main__":

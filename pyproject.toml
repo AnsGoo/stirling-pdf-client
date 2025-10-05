@@ -1,7 +1,7 @@
 
 
 [project]
-name = "stirling-pdf-client"
+name = "stirling_pdf_client"
 version = "0.1.0"
 description = "A Python client for the Stirling PDF API"
 readme = "README.md"
@@ -29,10 +29,11 @@ allow-insecure-host = ["pypi.tuna.tsinghua.edu.cn"]
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
 default = true
 
-[tool.setuptools.packages.find]
-where = ["src"]
-namespaces = false
+[dependency-groups]
+dev = [
+    "ruff>=0.13.3",
+]
 
-[build-system]
-requires = ["setuptools>=61.0"]
-build-backend = "setuptools.build_meta"
+[project.optional-dependencies]
+dev = ["ruff"]
+

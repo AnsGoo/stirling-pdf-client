@@ -1,6 +1,5 @@
-from token import OP
 from httpx import Client, Response
-from typing import Literal, Optional
+from typing import Literal, Optional, List
 from pathlib import Path
 from dataclasses import dataclass
 from .utils import save_file
@@ -40,6 +39,42 @@ class ScannerEffectOption:
 class ReplaceInvertPdfOptions:
     backGroundColor: Optional[str] = None
     textColor: Optional[str] = None
+
+
+@dataclass
+class OcrPdfOptions:
+    sidecar: Optional[bool] = True
+    deskew: Optional[bool] = True
+    clean: Optional[bool] = True
+    clean_final: Optional[bool] = True
+    remove_images_after: Optional[bool] = True
+
+@dataclass
+class StampOptions:
+    page_numbers: Optional[str] = 'all'
+    stamp_type: Optional[Literal['text', 'image']] = 'text'
+    stamp_text: Optional[str] = None
+    stamp_image: Optional[Path] = None
+    alphabet: Optional[Literal['roman', 'arabic','japanese','chinese','korean']] = "roman"
+    font_size: Optional[int] = 30
+    rotation: Optional[int] = 0
+    opacity: Optional[float] = 0.5
+    override_x: Optional[float] = -1
+    override_y: Optional[float] = -1
+    position: Optional[Literal[
+        'topLeft', 'topRight', "topCenter",
+    'bottomLeft', 'bottomRight', "bottomCenter",
+    "middleLeft","middleRight","middleCenter"]] = 'middleCenter'
+    custom_margin: Optional[Literal["medium","small","large","x-large"]] = "medium"
+    custom_color: Optional[str] = "#d3d3d3"
+
+@dataclass
+class ImageOptions:
+    page_numbers: Optional[str] = 'all'
+    image_file: Path
+    x: Optional[float] = 0
+    y: Optional[float] = 0
+    every_page: Optional[bool] = False
 
 
 class MiscApi:
@@ -202,3 +237,355 @@ class MiscApi:
         if file:
             file.close()
         return resp.text
+
+    def repair(
+        self, out_path: Path, file_input: Optional[Path], fileId: Optional[str] = None
+    ) -> str:
+        url = "/api/v1/misc/repair"
+        if file_input is None and fileId is None:
+            raise ValueError("file_input and fileId must be provided one of")
+        file = None
+        if file_input:
+            file = open(file_input, "rb")
+        files = {"fileInput": file}
+        data = {"fileId": fileId}
+        resp: Response = self.__client.request(
+            method="POST", url=url, data=data, files=files
+        )
+        save_file(resp=resp, out_path=out_path)
+        if file:
+            file.close()
+        return resp.text
+
+    def remove_blanks(
+        self,
+        out_path: Path,
+        file_input: Optional[Path],
+        fileId: Optional[str] = None,
+        threshold: Optional[int] = 10,
+        white_percent: Optional[float] = 99.9,
+    ) -> str:
+        url = "/api/v1/misc/remove-blanks"
+        if file_input is None and fileId is None:
+            raise ValueError("file_input and fileId must be provided one of")
+        file = None
+        if file_input:
+            file = open(file_input, "rb")
+        files = {"fileInput": file}
+        data = {"fileId": fileId, "threshold": threshold, "whitePercent": white_percent}
+        resp: Response = self.__client.request(
+            method="POST", url=url, data=data, files=files
+        )
+        save_file(resp=resp, out_path=out_path)
+        if file:
+            file.close()
+        return resp.text
+
+    def orc_pdf(
+        self,
+        out_path: Path,
+        languages: Optional[List[str]],
+        file_input: Optional[Path],
+        fileId: Optional[str] = None,
+        orc_type: Literal["skip-text", "force-ocr", "Normal"] = "skip-text",
+        orc_render_type: Literal["hocr", "sandwich"] = "hocr",
+        options: Optional[OcrPdfOptions] = {
+            "sidecar": True,
+            "deskew": True,
+            "clean": True,
+            "clean_final": True,
+            "remove_images_after": True,
+        },
+    ) -> str:
+        url = "/api/v1/misc/orc-pdf"
+        if file_input is None and fileId is None:
+            raise ValueError("file_input and fileId must be provided one of")
+        file = None
+        if file_input:
+            file = open(file_input, "rb")
+        files = {"fileInput": file}
+        data = {
+            "fileId": fileId,
+            "languages": languages,
+            "orcType": orc_type,
+            "orcRenderType": orc_render_type,
+        }
+        if options:
+            data.update(
+                {
+                    "sidecar": options.sidecar,
+                    "deskew": options.deskew,
+                    "clean": options.clean,
+                    "clean_final": options.clean_final,
+                    "remove_images_after": options.remove_images_after,
+                }
+            )
+        resp: Response = self.__client.request(
+            method="POST", url=url, data=data, files=files
+        )
+        save_file(resp=resp, out_path=out_path)
+        if file:
+            file.close()
+        return resp.text
+
+    def flatten(
+        self,
+        out_path: Path,
+        file_input: Optional[Path],
+        fileId: Optional[str] = None,
+        flatten_only_forms: Optional[bool] = False,
+    ) -> str:
+        url = "/api/v1/misc/flatten"
+        if file_input is None and fileId is None:
+            raise ValueError("file_input and fileId must be provided one of")
+        file = None
+        if file_input:
+            file = open(file_input, "rb")
+        files = {"fileInput": file}
+        data = {"fileId": fileId, "flattenOnlyForms": flatten_only_forms}
+        resp: Response = self.__client.request(
+            method="POST", url=url, data=data, files=files
+        )
+        save_file(resp=resp, out_path=out_path)
+        if file:
+            file.close()
+        return resp.text
+
+    def extract_images(
+        self,
+        out_path: Path,
+        file_input: Optional[Path],
+        fileId: Optional[str] = None,
+        format: Literal["png", "jpg", "jpeg", "gif"] = "png",
+        allow_duplicates: Optional[bool] = False,
+    ) -> str:
+        url = "/api/v1/misc/extract-images"
+        if file_input is None and fileId is None:
+            raise ValueError("file_input and fileId must be provided one of")
+        file = None
+        if file_input:
+            file = open(file_input, "rb")
+        files = {"fileInput": file}
+        data = {"fileId": fileId, "format": format, "allowDuplicates": allow_duplicates}
+        resp: Response = self.__client.request(
+            method="POST", url=url, data=data, files=files
+        )
+        save_file(resp=resp, out_path=out_path)
+        if file:
+            file.close()
+        return resp.text
+
+    def extract_image_scans(
+        self,
+        out_path: Path, 
+        file_input: Path,
+        angle_threshold: Optional[int] = 5,
+        tolerance: Optional[int] = 20,
+        min_area: Optional[int] = 8000,
+        min_contour_area: Optional[int] = 500,
+        border_size: Optional[int] = 1,
+    ) -> str:
+        url = "/api/v1/misc/extract-image-scans"
+        file = None
+        if file_input:
+            file = open(file_input, "rb")
+        files = {"fileInput": file}
+        data = {
+            "angleThreshold": angle_threshold,
+            "tolerance": tolerance,
+            "minArea": min_area,
+            "minContourArea": min_contour_area,
+            "borderSize": border_size,
+        }
+        resp: Response = self.__client.request(
+            method="POST", url=url, data=data, files=files
+        )
+        save_file(resp=resp, out_path=out_path)
+        if file:
+            file.close()
+        return resp.text
+
+    def decompress_pdf(
+        self, out_path: Path, file_input: Optional[Path], fileId: Optional[str] = None
+    ) -> str:
+        url = "/api/v1/misc/decompress-pdf"
+        if file_input is None and fileId is None:
+            raise ValueError("file_input and fileId must be provided one of")
+        file = None
+        if file_input:
+            file = open(file_input, "rb")
+        files = {"fileInput": file}
+        data = {"fileId": fileId}
+        resp: Response = self.__client.request(
+            method="POST", url=url, data=data, files=files
+        )
+        save_file(resp=resp, out_path=out_path)
+        if file:
+            file.close()
+        return resp.text
+
+    def compress_pdf(
+        self,
+        out_path: Path,
+        file_input: Optional[Path],
+        fileId: Optional[str] = None,
+        optimize_level: Optional[int] = 5,
+        expected_output_size: Optional[int] = 25,
+        linearize: Optional[bool] = False,
+        normalize: Optional[bool] = False,
+        grayscale: Optional[bool] = False,
+    ) -> str:
+        url = "/api/v1/misc/compress-pdf"
+        if file_input is None and fileId is None:
+            raise ValueError("file_input and fileId must be provided one of")
+        file = None
+        if file_input:
+            file = open(file_input, "rb")
+        files = {"fileInput": file}
+        data = {
+            "fileId": fileId,
+            "optimizeLevel": optimize_level,
+            "expectedOutputSize": f"{expected_output_size}kb",
+            "linearize": linearize,
+            "normalize": normalize,
+            "grayscale": grayscale,
+        }
+        resp: Response = self.__client.request(
+            method="POST", url=url, data=data, files=files
+        )
+        save_file(resp=resp, out_path=out_path)
+        if file:
+            file.close()
+        return resp.text
+
+    def auto_split_pdf(
+        self,
+        out_path: Path,
+        file_input: Optional[Path],
+        fileId: Optional[str] = None,
+    ) -> str:
+        url = "/api/v1/misc/auto-split-pdf"
+        if file_input is None and fileId is None:
+            raise ValueError("file_input and fileId must be provided one of")
+        file = None
+        if file_input:
+            file = open(file_input, "rb")
+        files = {"fileInput": file}
+        data = {"fileId": fileId}
+        resp: Response = self.__client.request(
+            method="POST", url=url, data=data, files=files
+        )
+        save_file(resp=resp, out_path=out_path)
+        if file:
+            file.close()
+        return resp.text
+    
+    def auto_rename(
+        self,
+        out_path: Path,
+        file_input: Optional[Path],
+        fileId: Optional[str] = None,
+        use_first_text_as_fallback: Optional[bool] = False,
+    ) -> str:
+        url = "/api/v1/misc/auto-rename"
+        if file_input is None and fileId is None:
+            raise ValueError("file_input and fileId must be provided one of")
+        file = None
+        if file_input:
+            file = open(file_input, "rb")
+        files = {"fileInput": file}
+        data = {"fileId": fileId, "useFirstTextAsFallback": use_first_text_as_fallback}
+        resp: Response = self.__client.request(
+            method="POST", url=url, data=data, files=files
+        )
+        save_file(resp=resp, out_path=out_path)
+        if file:
+            file.close()
+        return resp.text
+    
+    def add_stamp(
+        self,
+        out_path: Path,
+        file_input: Optional[Path],
+        fileId: Optional[str] = None,
+        options: Optional[StampOptions] = StampOptions(),
+    ) -> str:
+        url = "/api/v1/misc/add-stamp"
+        if file_input is None and fileId is None:
+            raise ValueError("file_input and fileId must be provided one of")
+        file = None
+        if file_input:
+            file = open(file_input, "rb")
+        files = {"fileInput": file}
+        data = {
+            "fileId": fileId, 
+        }
+        POSITION_MAPPING = {
+           "topLeft": 7,
+           "topRight": 9,
+           "topCenter": 8,
+           "bottomLeft": 1,
+           "bottomRight": 3,
+           "bottomCenter": 2,
+           "middleLeft": 4,
+           "middleRight": 6,
+           "middleCenter": 5,
+        }
+        data.update({
+            "pageNumbers": options.page_numbers,
+            "stampType": options.stamp_type,
+            "stampText": options.stamp_text,
+            "stampImage": open(options.stamp_image, "rb"),
+            "alphabet": options.alphabet,
+            "position": POSITION_MAPPING[options.position],
+            "customMargin": options.custom_margin,
+            "customColor": options.custom_color,
+            "rotation": options.rotation,
+            "fontSize": options.font_size,
+            "override_x": options.override_x,
+            "override_y": options.override_y,
+            "opacity": options.opacity, 
+        })
+
+        resp: Response = self.__client.request(
+            method="POST", url=url, data=data, files=files
+        )
+        save_file(resp=resp, out_path=out_path)
+        if file:
+            file.close()
+        return resp.text
+
+    def add_image(
+        self,
+        out_path: Path,
+        file_input: Optional[Path],
+        options: Optional[ImageOptions],
+        fileId: Optional[str] = None,
+    ) -> str:
+        url = "/api/v1/misc/add-image"
+        if file_input is None and fileId is None:
+            raise ValueError("file_input and fileId must be provided one of")
+        file = None
+        if file_input:
+            file = open(file_input, "rb")
+        files = {"fileInput": file}
+        data = {
+            "fileId": fileId, 
+        }
+        with open(options.image_file, "rb") as f:
+            files["image"] = f
+        data.update({
+            "pageNumbers": options.page_numbers,
+            "x": options.x,
+            "y": options.y,
+            "everyPage": options.every_page,
+        })
+        resp: Response = self.__client.request(
+            method="POST", url=url, data=data, files=files
+        )
+        save_file(resp=resp, out_path=out_path)
+        if file:
+            file.close()
+        return resp.text
+
+

@@ -1,8 +1,7 @@
-import re
-import urllib
 from pathlib import Path
 from typing import Optional, Any, Literal, List
 from httpx import Client, Response
+from .utils import save_file
 
 
 
@@ -57,7 +56,7 @@ class ConvertApi:
         resp: Response = self.__client.request(
             method="POST", url=url, data=data, files=files
         )
-        self._save_file(resp=resp, out_path=out_path)
+        save_file(resp=resp, out_path=out_path)
         if file:
             file.close()
         return resp.status_code
@@ -81,7 +80,7 @@ class ConvertApi:
         resp: Response = self.__client.request(
             method="POST", url=url, data=data, files=files
         )
-        self._save_file(resp=resp, out_path=out_path)
+        save_file(resp=resp, out_path=out_path)
         if file:
             file.close()
         return resp.status_code
@@ -107,7 +106,7 @@ class ConvertApi:
         resp: Response = self.__client.request(
             method="POST", url=url, data=data, files=files
         )
-        self._save_file(resp=resp, out_path=out_path)
+        save_file(resp=resp, out_path=out_path)
         if file:
             file.close()
         return resp.status_code
@@ -133,7 +132,7 @@ class ConvertApi:
         resp: Response = self.__client.request(
             method="POST", url=url, data=data, files=files
         )
-        self._save_file(resp=resp, out_path=out_path)
+        save_file(resp=resp, out_path=out_path)
         if file:
             file.close()
         return resp.status_code
@@ -153,7 +152,7 @@ class ConvertApi:
         resp: Response = self.__client.request(
             method="POST", url=url, data=data, files=files
         )
-        self._save_file(resp=resp, out_path=out_path)
+        save_file(resp=resp, out_path=out_path)
         if file:
             file.close()
         return resp.status_code
@@ -190,7 +189,7 @@ class ConvertApi:
         resp: Response = self.__client.request(
             method="POST", url=url, data=data, files=files
         )
-        self._save_file(resp=resp, out_path=out_path)
+        save_file(resp=resp, out_path=out_path)
         if file:
             file.close()
         return resp.status_code
@@ -210,7 +209,7 @@ class ConvertApi:
         resp: Response = self.__client.request(
             method="POST", url=url, data=data, files=files
         )
-        self._save_file(resp=resp, out_path=out_path)
+        save_file(resp=resp, out_path=out_path)
         if file:
             file.close()
         return resp.status_code
@@ -234,7 +233,7 @@ class ConvertApi:
         resp: Response = self.__client.request(
             method="POST", url=url, data=data, files=files
         )
-        self._save_file(resp=resp, out_path=out_path)
+        save_file(resp=resp, out_path=out_path)
         if file:
             file.close()
         return resp.status_code
@@ -245,7 +244,7 @@ class ConvertApi:
         file = open(file_input, "rb")
         files = {"fileInput": file}
         resp: Response = self.__client.request(method="POST", url=url, files=files)
-        self._save_file(resp=resp, out_path=out_path)
+        save_file(resp=resp, out_path=out_path)
         if file:
             file.close()
         return resp.status_code
@@ -278,7 +277,7 @@ class ConvertApi:
         resp: Response = self.__client.request(
             method="POST", url=url, files=files, data=data
         )
-        self._save_file(resp=resp, out_path=out_path)
+        save_file(resp=resp, out_path=out_path)
 
         # 确保所有文件都被关闭
         for file in opened_files:
@@ -304,7 +303,7 @@ class ConvertApi:
         resp: Response = self.__client.request(
             method="POST", url=url, files=files, data=data
         )
-        self._save_file(resp=resp, out_path=out_path)
+        save_file(resp=resp, out_path=out_path)
         if file:
             file.close()
         return resp.status_code
@@ -315,7 +314,7 @@ class ConvertApi:
         files = {"fileInput": file}
 
         resp: Response = self.__client.request(method="POST", url=url, files=files)
-        self._save_file(resp=resp, out_path=out_path)
+        save_file(resp=resp, out_path=out_path)
         if file:
             file.close()
         return resp.status_code
@@ -347,33 +346,7 @@ class ConvertApi:
         resp: Response = self.__client.request(
             method="POST", url=url, files=files, data=data
         )
-        self._save_file(resp=resp, out_path=out_path)
+        save_file(resp=resp, out_path=out_path)
         if file:
             file.close()
         return resp.status_code
-
-    def _save_file(self, resp: Response, out_path: Path):
-        target_file = out_path
-        if not out_path.is_file():
-            filename = self._get_filename(resp)
-            target_file = out_path.joinpath(filename)
-        with open(target_file, "wb") as f:
-            f.write(resp.content)
-
-    def _get_filename(self, resp: Response, default_filename="unkown_filename") -> str:
-        """提取文件名的主方法"""
-        headers = resp.headers
-        content_disposition = headers.get("content-disposition", "")
-
-        # 从Content-Disposition提取
-        if content_disposition:
-            match = re.search(
-                r"filename\*?=([^;]+)", content_disposition, re.IGNORECASE
-            )
-            if match:
-                filename = match.group(1).strip(" \"'")
-                # 处理编码
-                if filename.startswith("UTF-8''") or filename.startswith("utf-8''"):
-                    filename = urllib.parse.unquote(filename[7:])
-                return re.sub(r'[<>:"/\\|?*]', "_", filename)
-        return default_filename

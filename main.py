@@ -27,7 +27,7 @@ def debug_info():
         print("提示: 请确保Stirling PDF服务器正在运行，并且URL正确")
 
 
-def main():
+def convert():
     client = StirlingPDFClient(base_url="http://192.168.124.18:18080")
     client.convert.pdf_to_word(
         file_input=Path("./mock/test.pdf"), out_path=Path("./mock")
@@ -48,6 +48,9 @@ def main():
         out_path=Path("./mock"), file_input=Path("./mock/test.pdf")
     )
 
+def main():
+    debug_info()
+    # convert()
 
 if __name__ == "__main__":
     main()

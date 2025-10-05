@@ -1,7 +1,6 @@
 from httpx import Client, Response
-from . import Status, LoadCount
+from .type import Status, LoadCount
 from typing import Any, List, Optional
-from httpx import Client, Response
 
 
 class InfoApi:

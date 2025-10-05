@@ -1,8 +1,7 @@
 from httpx import Client
 
-from . import ConvertApi
-from . import InfoApi
-from httpx import Client
+from .convert import ConvertApi
+from .info import InfoApi
 
 
 class StirlingPDFClient:

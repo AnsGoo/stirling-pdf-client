@@ -12,6 +12,7 @@ def save_file(resp: Response, out_path: Path):
     with open(target_file, "wb") as f:
         f.write(resp.content)
 
+
 def get_filename(resp: Response, default_filename="unkown_filename") -> str:
     """提取文件名的主方法"""
     headers = resp.headers
@@ -19,9 +20,7 @@ def get_filename(resp: Response, default_filename="unkown_filename") -> str:
 
     # 从Content-Disposition提取
     if content_disposition:
-        match = re.search(
-            r"filename\*?=([^;]+)", content_disposition, re.IGNORECASE
-        )
+        match = re.search(r"filename\*?=([^;]+)", content_disposition, re.IGNORECASE)
         if match:
             filename = match.group(1).strip(" \"'")
             # 处理编码

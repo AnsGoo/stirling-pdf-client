@@ -4,7 +4,6 @@ from httpx import Client, Response
 from .utils import save_file
 
 
-
 class ConvertApi:
     __client: Client
 

@@ -49,28 +49,41 @@ class OcrPdfOptions:
     clean_final: Optional[bool] = True
     remove_images_after: Optional[bool] = True
 
+
 @dataclass
 class StampOptions:
-    page_numbers: Optional[str] = 'all'
-    stamp_type: Optional[Literal['text', 'image']] = 'text'
+    page_numbers: Optional[str] = "all"
+    stamp_type: Optional[Literal["text", "image"]] = "text"
     stamp_text: Optional[str] = None
     stamp_image: Optional[Path] = None
-    alphabet: Optional[Literal['roman', 'arabic','japanese','chinese','korean']] = "roman"
+    alphabet: Optional[Literal["roman", "arabic", "japanese", "chinese", "korean"]] = (
+        "roman"
+    )
     font_size: Optional[int] = 30
     rotation: Optional[int] = 0
     opacity: Optional[float] = 0.5
     override_x: Optional[float] = -1
     override_y: Optional[float] = -1
-    position: Optional[Literal[
-        'topLeft', 'topRight', "topCenter",
-    'bottomLeft', 'bottomRight', "bottomCenter",
-    "middleLeft","middleRight","middleCenter"]] = 'middleCenter'
-    custom_margin: Optional[Literal["medium","small","large","x-large"]] = "medium"
+    position: Optional[
+        Literal[
+            "topLeft",
+            "topRight",
+            "topCenter",
+            "bottomLeft",
+            "bottomRight",
+            "bottomCenter",
+            "middleLeft",
+            "middleRight",
+            "middleCenter",
+        ]
+    ] = "middleCenter"
+    custom_margin: Optional[Literal["medium", "small", "large", "x-large"]] = "medium"
     custom_color: Optional[str] = "#d3d3d3"
+
 
 @dataclass
 class ImageOptions:
-    page_numbers: Optional[str] = 'all'
+    page_numbers: Optional[str] = "all"
     image_file: Path
     x: Optional[float] = 0
     y: Optional[float] = 0
@@ -377,7 +390,7 @@ class MiscApi:
 
     def extract_image_scans(
         self,
-        out_path: Path, 
+        out_path: Path,
         file_input: Path,
         angle_threshold: Optional[int] = 5,
         tolerance: Optional[int] = 20,
@@ -479,7 +492,7 @@ class MiscApi:
         if file:
             file.close()
         return resp.text
-    
+
     def auto_rename(
         self,
         out_path: Path,
@@ -502,7 +515,7 @@ class MiscApi:
         if file:
             file.close()
         return resp.text
-    
+
     def add_stamp(
         self,
         out_path: Path,
@@ -518,34 +531,36 @@ class MiscApi:
             file = open(file_input, "rb")
         files = {"fileInput": file}
         data = {
-            "fileId": fileId, 
+            "fileId": fileId,
         }
         POSITION_MAPPING = {
-           "topLeft": 7,
-           "topRight": 9,
-           "topCenter": 8,
-           "bottomLeft": 1,
-           "bottomRight": 3,
-           "bottomCenter": 2,
-           "middleLeft": 4,
-           "middleRight": 6,
-           "middleCenter": 5,
+            "topLeft": 7,
+            "topRight": 9,
+            "topCenter": 8,
+            "bottomLeft": 1,
+            "bottomRight": 3,
+            "bottomCenter": 2,
+            "middleLeft": 4,
+            "middleRight": 6,
+            "middleCenter": 5,
         }
-        data.update({
-            "pageNumbers": options.page_numbers,
-            "stampType": options.stamp_type,
-            "stampText": options.stamp_text,
-            "stampImage": open(options.stamp_image, "rb"),
-            "alphabet": options.alphabet,
-            "position": POSITION_MAPPING[options.position],
-            "customMargin": options.custom_margin,
-            "customColor": options.custom_color,
-            "rotation": options.rotation,
-            "fontSize": options.font_size,
-            "override_x": options.override_x,
-            "override_y": options.override_y,
-            "opacity": options.opacity, 
-        })
+        data.update(
+            {
+                "pageNumbers": options.page_numbers,
+                "stampType": options.stamp_type,
+                "stampText": options.stamp_text,
+                "stampImage": open(options.stamp_image, "rb"),
+                "alphabet": options.alphabet,
+                "position": POSITION_MAPPING[options.position],
+                "customMargin": options.custom_margin,
+                "customColor": options.custom_color,
+                "rotation": options.rotation,
+                "fontSize": options.font_size,
+                "override_x": options.override_x,
+                "override_y": options.override_y,
+                "opacity": options.opacity,
+            }
+        )
 
         resp: Response = self.__client.request(
             method="POST", url=url, data=data, files=files
@@ -570,16 +585,18 @@ class MiscApi:
             file = open(file_input, "rb")
         files = {"fileInput": file}
         data = {
-            "fileId": fileId, 
+            "fileId": fileId,
         }
         with open(options.image_file, "rb") as f:
             files["image"] = f
-        data.update({
-            "pageNumbers": options.page_numbers,
-            "x": options.x,
-            "y": options.y,
-            "everyPage": options.every_page,
-        })
+        data.update(
+            {
+                "pageNumbers": options.page_numbers,
+                "x": options.x,
+                "y": options.y,
+                "everyPage": options.every_page,
+            }
+        )
         resp: Response = self.__client.request(
             method="POST", url=url, data=data, files=files
         )
@@ -587,5 +604,3 @@ class MiscApi:
         if file:
             file.close()
         return resp.text
-
-

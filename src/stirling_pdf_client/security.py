@@ -1,8 +1,8 @@
-from nt import remove
 from httpx import Client, Response
-from typing import Any, List, Literal, Optional
+from typing import List, Literal, Optional
 from pathlib import Path
 from dataclasses import dataclass
+from utils import save_file
 
 
 @dataclass
@@ -117,6 +117,7 @@ class SecurityApi:
 
     def sanitize_pdf(
         self,
+        out_path: Path,
         file_input: Optional[Path],
         options: SanitizePdfOption,
         fileId: Optional[str] = None,
@@ -145,10 +146,12 @@ class SecurityApi:
         )
         if file:
             file.close()
+        save_file(resp, out_path)
         return resp.text
 
     def remove_password(
         self,
+        out_path: Path,
         password: str,
         file_input: Optional[Path],
         fileId: Optional[str] = None,
@@ -165,10 +168,12 @@ class SecurityApi:
         )
         if file:
             file.close()
+        save_file(resp, out_path)
         return resp.text
 
     def remove_cert_sign(
         self,
+        out_path: Path,
         file_input: Optional[Path],
         fileId: Optional[str] = None,
     ) -> str:
@@ -186,10 +191,12 @@ class SecurityApi:
         )
         if file:
             file.close()
+        save_file(resp, out_path)
         return resp.text
 
     def redact(
         self,
+        out_path: Path,
         options: RedactOption,
         file_input: Optional[Path],
         fileId: Optional[str] = None,
@@ -223,6 +230,7 @@ class SecurityApi:
         )
         if file:
             file.close()
+        save_file(resp, out_path)
         return resp.text
 
     def get_info_on_pdf(
@@ -246,6 +254,7 @@ class SecurityApi:
 
     def add_password(
         self,
+        out_path: Path,
         password: str,
         owner_password: str,
         options: AddPasswordOption,
@@ -282,10 +291,12 @@ class SecurityApi:
         )
         if file:
             file.close()
+        save_file(resp, out_path)
         return resp.text
 
     def add_watermark(
         self,
+        out_path: Path,
         options: AddWatermarkOption,
         file_input: Optional[Path],
         fileId: Optional[str] = None,
@@ -317,4 +328,5 @@ class SecurityApi:
         )
         if file:
             file.close()
+        save_file(resp, out_path)
         return resp.text

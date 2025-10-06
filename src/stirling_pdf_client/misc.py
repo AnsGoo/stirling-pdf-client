@@ -604,3 +604,32 @@ class MiscApi:
         if file:
             file.close()
         return resp.text
+
+    def add_attachments(
+        self,
+        out_path: Path,
+        file_input: Optional[Path],
+        attachments: List[Path],
+        fileId: Optional[str] = None,
+        
+    ) -> str:
+        url = "/api/v1/misc/add-attachments"
+        if file_input is None and fileId is None:
+            raise ValueError("file_input and fileId must be provided one of")
+        file = None
+        if file_input:
+            file = open(file_input, "rb")
+        attachments_files = []
+        for attachment in attachments:
+            attachments_files.append(open(attachment, "rb"))
+        files = {"fileInput": file, "attachments": attachments_files}
+        data = {"fileId": fileId}
+        resp: Response = self.__client.request(
+            method="POST", url=url, data=data, files=files
+        )
+        for attachment_file in attachments_files:
+            attachment_file.close()
+        save_file(resp=resp, out_path=out_path)
+        if file:
+            file.close()
+        return resp.text

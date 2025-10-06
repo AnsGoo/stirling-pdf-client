@@ -5,6 +5,7 @@ from .info import InfoApi
 from .security import SecurityApi
 from .misc import MiscApi
 
+
 class StirlingPDFClient:
     def __init__(
         self,

@@ -2,7 +2,8 @@ from httpx import Client
 
 from .convert import ConvertApi
 from .info import InfoApi
-
+from .security import SecurityApi
+from .misc import MiscApi
 
 class StirlingPDFClient:
     def __init__(
@@ -21,3 +22,5 @@ class StirlingPDFClient:
         )
         self.info = InfoApi(self.__client)
         self.convert = ConvertApi(self.__client)
+        self.security = SecurityApi(self.__client)
+        self.misc = MiscApi(self.__client)

@@ -48,9 +48,11 @@ def convert():
         out_path=Path("./mock"), file_input=Path("./mock/test.pdf")
     )
 
+
 def main():
     debug_info()
     # convert()
+
 
 if __name__ == "__main__":
     main()

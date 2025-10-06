@@ -611,7 +611,6 @@ class MiscApi:
         file_input: Optional[Path],
         attachments: List[Path],
         fileId: Optional[str] = None,
-        
     ) -> str:
         url = "/api/v1/misc/add-attachments"
         if file_input is None and fileId is None:

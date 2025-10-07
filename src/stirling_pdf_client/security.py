@@ -1,3 +1,5 @@
+from operator import truediv
+from os import name
 from httpx import Client, Response
 from typing import List, Literal, Optional
 from pathlib import Path
@@ -62,7 +64,15 @@ class CertSignOption:
     private_key_file: Optional[Path] = None
     cert_file: Optional[Path] = None
     p12_file: Optional[Path] = None
-    jks_file: Optional[str] = None
+    jks_file: Optional[Path] = None
+    password: Optional[str] = None
+    show_signature: Optional[bool] = False
+    reason: Optional[str] = None
+    location: Optional[str] = None
+    name: Optional[str] = None
+    page_number: Optional[int] = 1
+    show_logo: Optional[bool] = True
+    
 
 
 @dataclass
@@ -344,6 +354,7 @@ class SecurityApi:
         out_path: Path,
         file_input: Optional[Path],
         fileId: Optional[str] = None,
+        options: CertSignOption = CertSignOption(),
     ) -> str:
         if file_input is None and fileId is None:
             raise ValueError("file_input and fileId must be provided one of")
@@ -352,6 +363,22 @@ class SecurityApi:
             file = open(file_input, "rb")
         data = {"fileId": fileId}
         url = "/api/v1/security/cert-sign"
+        data.update(
+            {
+                "certType": options.cert_type,
+                "privateKeyFile": options.private_key_file,
+                "certFile": options.cert_file,
+                "p12File": options.p12_file,
+                "jksFile": options.jks_file,
+                "password": options.password,
+                "showSignature": options.show_signature,
+                "reason": options.reason,
+                "location": options.location,
+                "name": options.name,
+                "pageNumber": options.page_number,
+                "showLogo": options.show_logo,
+            }
+        )
         resp: Response = self.__client.request(
             method="POST", url=url, files={"fileInput": file}, data=data
         )

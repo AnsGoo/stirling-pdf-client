@@ -56,6 +56,14 @@ class RedactOption:
     convert_pdf_to_image: ConvertPdfToImageOption
     pageRedactionColor: str = "#000000"
 
+@dataclass
+class CertSignOption:
+    cert_type: Literal["PEM", "PKCS12","PFX", "JKS"] = "PEM"
+    private_key_file: Optional[Path] = None
+    cert_file: Optional[Path] = None
+    p12_file: Optional[Path] = None
+    jks_file: Optional[str] = None
+
 
 @dataclass
 class AddPasswordOption:
@@ -323,6 +331,27 @@ class SecurityApi:
             }
         )
         url = "/api/v1/security/add-watermark"
+        resp: Response = self.__client.request(
+            method="POST", url=url, files={"fileInput": file}, data=data
+        )
+        if file:
+            file.close()
+        save_file(resp, out_path)
+        return resp.text
+
+    def cert_sign(
+        self,
+        out_path: Path,
+        file_input: Optional[Path],
+        fileId: Optional[str] = None,
+    ) -> str:
+        if file_input is None and fileId is None:
+            raise ValueError("file_input and fileId must be provided one of")
+        file = None
+        if file_input:
+            file = open(file_input, "rb")
+        data = {"fileId": fileId}
+        url = "/api/v1/security/cert-sign"
         resp: Response = self.__client.request(
             method="POST", url=url, files={"fileInput": file}, data=data
         )

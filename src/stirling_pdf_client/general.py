@@ -1,4 +1,5 @@
 
+from ctypes import Array
 from dataclasses import dataclass, fields
 from heapq import merge
 from operator import truediv
@@ -19,6 +20,14 @@ class SplitPdfByChaptersOptions:
     include_metadata: Optional[bool] = True
     allow_duplicates: Optional[bool] = True
     bookmark_level: Optional[int] = 2
+
+@dataclass
+class OverlayPdfOptions:
+    overlay_mode: Optional[Literal['SequentialOverlay','InterleavedOverlay','FixedRepeatOverlay']] = 'SequentialOverlay'
+    counts: Optional[List[int]] = []
+    overlay_position:int = 0
+    overlay_files:List[Path] = []
+
 
 
 class GeneralApi:
@@ -172,4 +181,120 @@ class GeneralApi:
         if file_input is not None:
             file.close()
         save_file(resp=resp, out_path=out_path)
+        return resp.text
+    
+    def remove_pages(self, out_path: Path, file_input: Optional[Path] = None, fileId: Optional[str] = None, page_numbers:str = 'all') -> str:
+        if file_input is None and fileId is None:
+            raise ValueError("file_input and fileId must be provided one of")
+        url = "/api/v1/general/remove-pages"
+        data = {}
+        file = None
+        files = {}
+        if file_input is not None:
+            file = open(file_input, "rb")
+            files["fileInput"] = file
+        if fileId is not None:
+            data["fileId"] = fileId
+        data.update({
+            "pageNumbers": page_numbers,
+        })
+        resp: Response = self.__client.request(
+            method="POST", url=url, data=data, files=files
+        )
+        if file_input is not None:
+            file.close()
+        save_file(resp=resp, out_path=out_path)
+        return resp.text
+
+    def remove_image_pdf(self, out_path: Path, file_input: Optional[Path] = None, fileId: Optional[str] = None) -> str:
+        if file_input is None and fileId is None:
+            raise ValueError("file_input and fileId must be provided one of")
+        url = "/api/v1/general/remove-image-pdf"
+        data = {}
+        file = None
+        files = {}
+        if file_input is not None:
+            file = open(file_input, "rb")
+            files["fileInput"] = file
+        if fileId is not None:
+            data["fileId"] = fileId
+        resp: Response = self.__client.request(
+            method="POST", url=url, data=data, files=files
+        )
+        if file_input is not None:
+            file.close()
+        save_file(resp=resp, out_path=out_path)
+        return resp.text
+    
+    def rearrange_page(self, out_path: Path, file_input: Optional[Path] = None, fileId: Optional[str] = None, page_numbers:str = 'all',custom_mode:Literal['CUSTOM','SIDE_STITCH_BOOKLET_SORT','REVERSE_ORDER','DUPLEX_SORT','BOOKLET_SORT','ODD_EVEN_SPLIT','ODD_EVEN_MERGE','REMOVE_FIRST','REMOVE_LAST','REMOVE_FIRST_AND_LAST','DUPLICATE'] = 'CUSTOM') -> str:
+        if file_input is None and fileId is None:
+            raise ValueError("file_input and fileId must be provided one of")
+        url = "/api/v1/general/rearrange-page"
+        data = {}
+        file = None
+        files = {}
+        if file_input is not None:
+            file = open(file_input, "rb")
+            files["fileInput"] = file
+        if fileId is not None:
+            data["fileId"] = fileId
+        data.update({
+            "pageNumbers": page_numbers,
+            "customMode": custom_mode,
+        })
+        resp: Response = self.__client.request(
+            method="POST", url=url, data=data, files=files
+        )
+        if file_input is not None:
+            file.close()
+        save_file(resp=resp, out_path=out_path)
+        return resp.text
+
+    def  pdf_to_single_page(self, out_path: Path, file_input: Optional[Path] = None, fileId: Optional[str] = None) -> str:
+        if file_input is None and fileId is None:
+            raise ValueError("file_input and fileId must be provided one of")
+        url = "/api/v1/general/pdf-to-single-page"
+        data = {}
+        file = None
+        files = {}
+        if file_input is not None:
+            file = open(file_input, "rb")
+            files["fileInput"] = file
+        if fileId is not None:
+            data["fileId"] = fileId
+        resp: Response = self.__client.request(
+            method="POST", url=url, data=data, files=files
+        )
+        if file_input is not None:
+            file.close()
+        save_file(resp=resp, out_path=out_path)
+        return resp.text
+    
+    def overlay_pdfs(self, out_path: Path,options:OverlayPdfOptions, file_input: Optional[Path] = None, fileId: Optional[str] = None, ) -> str:
+        if file_input is None and fileId is None:
+            raise ValueError("file_input and fileId must be provided one of")
+        url = "/api/v1/general/overlay-pdfs"
+        data = {}
+        file = None
+        files = {}
+        if file_input is not None:
+            file = open(file_input, "rb")
+            files["fileInput"] = file
+        if fileId is not None:
+            data["fileId"] = fileId
+        
+        overlay_files = []
+        if options.overlay_files:
+            overlay_files = [open(f, "rb") for f in options.overlay_files]
+        
+        files.update({"overlayFiles": overlay_files})
+        resp: Response = self.__client.request(
+            method="POST", url=url, data=data, files=files
+        )
+        if file_input is not None:
+            file.close()
+        save_file(resp=resp, out_path=out_path)
+        if overlay_files:
+            for f in overlay_files:
+                f.close()
         return resp.text

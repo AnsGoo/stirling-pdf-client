@@ -58,9 +58,10 @@ class RedactOption:
     convert_pdf_to_image: ConvertPdfToImageOption
     pageRedactionColor: str = "#000000"
 
+
 @dataclass
 class CertSignOption:
-    cert_type: Literal["PEM", "PKCS12","PFX", "JKS"] = "PEM"
+    cert_type: Literal["PEM", "PKCS12", "PFX", "JKS"] = "PEM"
     private_key_file: Optional[Path] = None
     cert_file: Optional[Path] = None
     p12_file: Optional[Path] = None
@@ -72,7 +73,6 @@ class CertSignOption:
     name: Optional[str] = None
     page_number: Optional[int] = 1
     show_logo: Optional[bool] = True
-    
 
 
 @dataclass

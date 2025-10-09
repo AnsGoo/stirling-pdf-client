@@ -1,12 +1,13 @@
-
 from ctypes import Array
 from dataclasses import dataclass, fields
 from heapq import merge
 from operator import truediv
 from pathlib import Path
+from re import X
 from typing import Optional, Any, Literal, List
 from httpx import Client, Response
 from .utils import save_file
+
 
 @dataclass
 class SplitPdfBySectionsOptions:
@@ -21,13 +22,23 @@ class SplitPdfByChaptersOptions:
     allow_duplicates: Optional[bool] = True
     bookmark_level: Optional[int] = 2
 
+
 @dataclass
 class OverlayPdfOptions:
-    overlay_mode: Optional[Literal['SequentialOverlay','InterleavedOverlay','FixedRepeatOverlay']] = 'SequentialOverlay'
+    overlay_mode: Optional[
+        Literal["SequentialOverlay", "InterleavedOverlay", "FixedRepeatOverlay"]
+    ] = "SequentialOverlay"
     counts: Optional[List[int]] = []
-    overlay_position:int = 0
-    overlay_files:List[Path] = []
+    overlay_position: int = 0
+    overlay_files: List[Path] = []
 
+
+@dataclass
+class CropBox:
+    x: Optional[int] = 0
+    y: Optional[int] = 0
+    width: Optional[int] = 0
+    height: Optional[int] = 0
 
 
 class GeneralApi:
@@ -36,7 +47,13 @@ class GeneralApi:
     def __init__(self, client: Client) -> None:
         self.__client = client
 
-    def split_pdf_by_sections(self, out_path: Path, file_input: Optional[Path] = None, fileId: Optional[str] = None, options: SplitPdfBySectionsOptions = SplitPdfBySectionsOptions()) -> str:
+    def split_pdf_by_sections(
+        self,
+        out_path: Path,
+        file_input: Optional[Path] = None,
+        fileId: Optional[str] = None,
+        options: SplitPdfBySectionsOptions = SplitPdfBySectionsOptions(),
+    ) -> str:
         if file_input is None and fileId is None:
             raise ValueError("file_input and fileId must be provided one of")
         url = "/api/v1/general/split-pdf-by-sections"
@@ -48,11 +65,13 @@ class GeneralApi:
             files["fileInput"] = file
         if fileId is not None:
             data["fileId"] = fileId
-        data.update({
-            "horizontalDivisions": options.horizontal_divisions,
-            "verticalDivisions": options.vertical_divisions,
-            "merge": options.merge,
-        })
+        data.update(
+            {
+                "horizontalDivisions": options.horizontal_divisions,
+                "verticalDivisions": options.vertical_divisions,
+                "merge": options.merge,
+            }
+        )
         resp: Response = self.__client.request(
             method="POST", url=url, data=data, files=files
         )
@@ -61,7 +80,13 @@ class GeneralApi:
         save_file(resp=resp, out_path=out_path)
         return resp.text
 
-    def split_pdf_by_chapters(self, out_path: Path, file_input: Optional[Path] = None, fileId: Optional[str] = None, options: SplitPdfByChaptersOptions = SplitPdfByChaptersOptions()) -> str:
+    def split_pdf_by_chapters(
+        self,
+        out_path: Path,
+        file_input: Optional[Path] = None,
+        fileId: Optional[str] = None,
+        options: SplitPdfByChaptersOptions = SplitPdfByChaptersOptions(),
+    ) -> str:
         if file_input is None and fileId is None:
             raise ValueError("file_input and fileId must be provided one of")
         url = "/api/v1/general/split-pdf-by-chapters"
@@ -73,11 +98,13 @@ class GeneralApi:
             files["fileInput"] = file
         if fileId is not None:
             data["fileId"] = fileId
-        data.update({
-            "includeMetadata": options.include_metadata,
-            "allowDuplicates": options.allow_duplicates,
-            "bookmarkLevel": options.bookmark_level,
-        })
+        data.update(
+            {
+                "includeMetadata": options.include_metadata,
+                "allowDuplicates": options.allow_duplicates,
+                "bookmarkLevel": options.bookmark_level,
+            }
+        )
         resp: Response = self.__client.request(
             method="POST", url=url, data=data, files=files
         )
@@ -85,7 +112,14 @@ class GeneralApi:
             file.close()
         save_file(resp=resp, out_path=out_path)
         return resp.text
-    def split_pages(self, out_path: Path, file_input: Optional[Path] = None, fileId: Optional[str] = None, page_numbers:str = 'all') -> str:
+
+    def split_pages(
+        self,
+        out_path: Path,
+        file_input: Optional[Path] = None,
+        fileId: Optional[str] = None,
+        page_numbers: str = "all",
+    ) -> str:
         if file_input is None and fileId is None:
             raise ValueError("file_input and fileId must be provided one of")
         url = "/api/v1/general/split-pages"
@@ -97,9 +131,11 @@ class GeneralApi:
             files["fileInput"] = file
         if fileId is not None:
             data["fileId"] = fileId
-        data.update({
-            "pageNumbers": page_numbers,
-        })
+        data.update(
+            {
+                "pageNumbers": page_numbers,
+            }
+        )
         resp: Response = self.__client.request(
             method="POST", url=url, data=data, files=files
         )
@@ -107,15 +143,22 @@ class GeneralApi:
             file.close()
         save_file(resp=resp, out_path=out_path)
         return resp.text
-    
-    def split_by_size_or_count(self, out_path: Path, file_input: Optional[Path] = None, fileId: Optional[str] = None, split_type:Literal['size', 'page','document'] = 'size', split_value:str='10MB') -> str:
+
+    def split_by_size_or_count(
+        self,
+        out_path: Path,
+        file_input: Optional[Path] = None,
+        fileId: Optional[str] = None,
+        split_type: Literal["size", "page", "document"] = "size",
+        split_value: str = "10MB",
+    ) -> str:
         if file_input is None and fileId is None:
             raise ValueError("file_input and fileId must be provided one of")
         url = "/api/v1/general/split-by-size-or-count"
         SPLIT_TYPE_MAP = {
-            'size': 0,
-            'page': 1,
-            'document': 2,
+            "size": 0,
+            "page": 1,
+            "document": 2,
         }
         data = {
             "splitType": SPLIT_TYPE_MAP[split_type],
@@ -124,7 +167,7 @@ class GeneralApi:
         file = None
         files = {}
         if file_input is not None:
-            file =  open(file_input, "rb")
+            file = open(file_input, "rb")
             files["fileInput"] = file
         if fileId is not None:
             data["fileId"] = fileId
@@ -135,8 +178,17 @@ class GeneralApi:
             file.close()
         save_file(resp=resp, out_path=out_path)
         return resp.text
-    
-    def scale_page(self, out_path: Path, file_input: Optional[Path] = None, fileId: Optional[str] = None,page_size:Literal['A0','A1','A2','A3','A4','A5','A6','LETTER','LEGAL',"KEEP"] = 'A4', scale_factor:float = 1.0) -> str:
+
+    def scale_page(
+        self,
+        out_path: Path,
+        file_input: Optional[Path] = None,
+        fileId: Optional[str] = None,
+        page_size: Literal[
+            "A0", "A1", "A2", "A3", "A4", "A5", "A6", "LETTER", "LEGAL", "KEEP"
+        ] = "A4",
+        scale_factor: float = 1.0,
+    ) -> str:
         if file_input is None and fileId is None:
             raise ValueError("file_input and fileId must be provided one of")
         url = "/api/v1/general/scale-page"
@@ -145,13 +197,15 @@ class GeneralApi:
         files = {}
         if file_input is not None:
             file = open(file_input, "rb")
-            files["fileInput"] = file   
+            files["fileInput"] = file
         if fileId is not None:
             data["fileId"] = fileId
-        data.update({
-            "pageSize": page_size,
-            "scale": scale_factor,
-        })
+        data.update(
+            {
+                "pageSize": page_size,
+                "scale": scale_factor,
+            }
+        )
         resp: Response = self.__client.request(
             method="POST", url=url, data=data, files=files
         )
@@ -159,8 +213,14 @@ class GeneralApi:
             file.close()
         save_file(resp=resp, out_path=out_path)
         return resp.text
-    
-    def rotate_page(self, out_path: Path, file_input: Optional[Path] = None, fileId: Optional[str] = None, angle:Literal[0,90,180,270] = 90) -> str:
+
+    def rotate_page(
+        self,
+        out_path: Path,
+        file_input: Optional[Path] = None,
+        fileId: Optional[str] = None,
+        angle: Literal[0, 90, 180, 270] = 90,
+    ) -> str:
         if file_input is None and fileId is None:
             raise ValueError("file_input and fileId must be provided one of")
         url = "/api/v1/general/rotate-page"
@@ -172,9 +232,11 @@ class GeneralApi:
             files["fileInput"] = file
         if fileId is not None:
             data["fileId"] = fileId
-        data.update({
-            "angle": angle,
-        })
+        data.update(
+            {
+                "angle": angle,
+            }
+        )
         resp: Response = self.__client.request(
             method="POST", url=url, data=data, files=files
         )
@@ -182,8 +244,14 @@ class GeneralApi:
             file.close()
         save_file(resp=resp, out_path=out_path)
         return resp.text
-    
-    def remove_pages(self, out_path: Path, file_input: Optional[Path] = None, fileId: Optional[str] = None, page_numbers:str = 'all') -> str:
+
+    def remove_pages(
+        self,
+        out_path: Path,
+        file_input: Optional[Path] = None,
+        fileId: Optional[str] = None,
+        page_numbers: str = "all",
+    ) -> str:
         if file_input is None and fileId is None:
             raise ValueError("file_input and fileId must be provided one of")
         url = "/api/v1/general/remove-pages"
@@ -195,9 +263,11 @@ class GeneralApi:
             files["fileInput"] = file
         if fileId is not None:
             data["fileId"] = fileId
-        data.update({
-            "pageNumbers": page_numbers,
-        })
+        data.update(
+            {
+                "pageNumbers": page_numbers,
+            }
+        )
         resp: Response = self.__client.request(
             method="POST", url=url, data=data, files=files
         )
@@ -206,7 +276,12 @@ class GeneralApi:
         save_file(resp=resp, out_path=out_path)
         return resp.text
 
-    def remove_image_pdf(self, out_path: Path, file_input: Optional[Path] = None, fileId: Optional[str] = None) -> str:
+    def remove_image_pdf(
+        self,
+        out_path: Path,
+        file_input: Optional[Path] = None,
+        fileId: Optional[str] = None,
+    ) -> str:
         if file_input is None and fileId is None:
             raise ValueError("file_input and fileId must be provided one of")
         url = "/api/v1/general/remove-image-pdf"
@@ -225,8 +300,27 @@ class GeneralApi:
             file.close()
         save_file(resp=resp, out_path=out_path)
         return resp.text
-    
-    def rearrange_page(self, out_path: Path, file_input: Optional[Path] = None, fileId: Optional[str] = None, page_numbers:str = 'all',custom_mode:Literal['CUSTOM','SIDE_STITCH_BOOKLET_SORT','REVERSE_ORDER','DUPLEX_SORT','BOOKLET_SORT','ODD_EVEN_SPLIT','ODD_EVEN_MERGE','REMOVE_FIRST','REMOVE_LAST','REMOVE_FIRST_AND_LAST','DUPLICATE'] = 'CUSTOM') -> str:
+
+    def rearrange_page(
+        self,
+        out_path: Path,
+        file_input: Optional[Path] = None,
+        fileId: Optional[str] = None,
+        page_numbers: str = "all",
+        custom_mode: Literal[
+            "CUSTOM",
+            "SIDE_STITCH_BOOKLET_SORT",
+            "REVERSE_ORDER",
+            "DUPLEX_SORT",
+            "BOOKLET_SORT",
+            "ODD_EVEN_SPLIT",
+            "ODD_EVEN_MERGE",
+            "REMOVE_FIRST",
+            "REMOVE_LAST",
+            "REMOVE_FIRST_AND_LAST",
+            "DUPLICATE",
+        ] = "CUSTOM",
+    ) -> str:
         if file_input is None and fileId is None:
             raise ValueError("file_input and fileId must be provided one of")
         url = "/api/v1/general/rearrange-page"
@@ -238,10 +332,12 @@ class GeneralApi:
             files["fileInput"] = file
         if fileId is not None:
             data["fileId"] = fileId
-        data.update({
-            "pageNumbers": page_numbers,
-            "customMode": custom_mode,
-        })
+        data.update(
+            {
+                "pageNumbers": page_numbers,
+                "customMode": custom_mode,
+            }
+        )
         resp: Response = self.__client.request(
             method="POST", url=url, data=data, files=files
         )
@@ -250,7 +346,12 @@ class GeneralApi:
         save_file(resp=resp, out_path=out_path)
         return resp.text
 
-    def  pdf_to_single_page(self, out_path: Path, file_input: Optional[Path] = None, fileId: Optional[str] = None) -> str:
+    def pdf_to_single_page(
+        self,
+        out_path: Path,
+        file_input: Optional[Path] = None,
+        fileId: Optional[str] = None,
+    ) -> str:
         if file_input is None and fileId is None:
             raise ValueError("file_input and fileId must be provided one of")
         url = "/api/v1/general/pdf-to-single-page"
@@ -269,8 +370,14 @@ class GeneralApi:
             file.close()
         save_file(resp=resp, out_path=out_path)
         return resp.text
-    
-    def overlay_pdfs(self, out_path: Path,options:OverlayPdfOptions, file_input: Optional[Path] = None, fileId: Optional[str] = None, ) -> str:
+
+    def overlay_pdfs(
+        self,
+        out_path: Path,
+        options: OverlayPdfOptions,
+        file_input: Optional[Path] = None,
+        fileId: Optional[str] = None,
+    ) -> str:
         if file_input is None and fileId is None:
             raise ValueError("file_input and fileId must be provided one of")
         url = "/api/v1/general/overlay-pdfs"
@@ -282,11 +389,11 @@ class GeneralApi:
             files["fileInput"] = file
         if fileId is not None:
             data["fileId"] = fileId
-        
+
         overlay_files = []
         if options.overlay_files:
             overlay_files = [open(f, "rb") for f in options.overlay_files]
-        
+
         files.update({"overlayFiles": overlay_files})
         resp: Response = self.__client.request(
             method="POST", url=url, data=data, files=files
@@ -297,4 +404,86 @@ class GeneralApi:
         if overlay_files:
             for f in overlay_files:
                 f.close()
+        return resp.text
+
+    def merge_pdfs(
+        self,
+        out_path: List[Path],
+        file_inputs: List[Path],
+        sort_type: Literal[
+            "orderProvided",
+            "byFileName",
+            "byDateModified",
+            "byDateCreated",
+            "byPDFTitle",
+        ] = "orderProvided",
+        remove_cert_sign: bool = True,
+        generate_toc: Optional[bool] = None,
+    ) -> str:
+        url = "/api/v1/general/merge-pdfs"
+        data = {}
+        files = {}
+        files["fileInputs"] = [open(f, "rb") for f in file_inputs]
+        data.update(
+            {
+                "sortType": sort_type,
+                "removeCertSign": remove_cert_sign,
+                "generateToc": generate_toc,
+            }
+        )
+        resp: Response = self.__client.request(
+            method="POST", url=url, data=data, files=files
+        )
+        save_file(resp=resp, out_path=out_path)
+        for f in file_inputs:
+            f.close()
+        return resp.text
+
+    def extract_bookmarks(self, out_path: Path, file: Path) -> str:
+        url = "/api/v1/general/extract-bookmarks"
+        file = None
+        files = {}
+        file_handle = open(file, "rb")
+        files["fileInput"] = file_handle
+        resp: Response = self.__client.request(method="POST", url=url, files=files)
+        if file_handle is not None:
+            file_handle.close()
+        save_file(resp=resp, out_path=out_path)
+        return resp.text
+
+    def crop(
+        self,
+        out_path: Path,
+        file_input: Optional[Path] = None,
+        fileId: Optional[str] = None,
+        options: CropBox = CropBox(),
+    ) -> str:
+        if file_input is None and fileId is None:
+            raise ValueError("file_input and fileId must be provided one of")
+        url = "/api/v1/general/crop"
+        file = None
+        files = {}
+        if file_input is not None:
+            file = open(file_input, "rb")
+            files["fileInput"] = file
+
+        data = {}
+        if fileId is not None:
+            data["fileId"] = fileId
+
+        data.update(
+            {
+                "x": options.x,
+                "y": options.y,
+                "width": options.width,
+                "height": options.height,
+            }
+        )
+
+        resp: Response = self.__client.request(
+            method="POST", url=url, files=files, data=options.model_dump()
+        )
+        if file_input is not None:
+            files["fileInput"].close()
+        save_file(resp=resp, out_path=out_path)
         return resp.text

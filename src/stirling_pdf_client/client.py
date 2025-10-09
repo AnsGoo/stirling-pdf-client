@@ -4,6 +4,7 @@ from .convert import ConvertApi
 from .info import InfoApi
 from .security import SecurityApi
 from .misc import MiscApi
+from .general import GeneralApi
 
 
 class StirlingPDFClient:
@@ -25,3 +26,4 @@ class StirlingPDFClient:
         self.convert = ConvertApi(self.__client)
         self.security = SecurityApi(self.__client)
         self.misc = MiscApi(self.__client)
+        self.general = GeneralApi(self.__client)

@@ -10,12 +10,12 @@ class ConvertApi:
     def __init__(self, client: Client) -> None:
         self.__client = client
 
-    def url_to_pdf(self, urlInput: str) -> str:
+    def url_to_pdf(self, urlInput: str, out_path: Path) -> str:
         url = "/api/v1/convert/url/pdf"
         resp: Response = self.__client.request(
             method="POST", url=url, data={"urlInput": urlInput}
         )
-
+        save_file(resp=resp, out_path=out_path)
         return resp.text
 
     def pdf_to_xml(self, file_input: Path, fileId: str) -> Any:

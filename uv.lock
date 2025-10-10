@@ -2,12 +2,6 @@ version = 1
 revision = 3
 requires-python = ">=3.12"
 
-[manifest]
-members = [
-    "stirling-pdf-client",
-    "stirling-pdf-demo",
-]
-
 [[package]]
 name = "anyio"
 version = "4.11.0"

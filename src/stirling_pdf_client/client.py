@@ -5,6 +5,8 @@ from .info import InfoApi
 from .security import SecurityApi
 from .misc import MiscApi
 from .general import GeneralApi
+from .filter import FilterApi
+
 
 
 class StirlingPDFClient:
@@ -27,3 +29,4 @@ class StirlingPDFClient:
         self.security = SecurityApi(self.__client)
         self.misc = MiscApi(self.__client)
         self.general = GeneralApi(self.__client)
+        self.filter = FilterApi(self.__client)

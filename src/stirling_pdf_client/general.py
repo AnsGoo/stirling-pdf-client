@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Optional, Literal, List
 from httpx import Client, Response
@@ -24,9 +24,9 @@ class OverlayPdfOptions:
     overlay_mode: Optional[
         Literal["SequentialOverlay", "InterleavedOverlay", "FixedRepeatOverlay"]
     ] = "SequentialOverlay"
-    counts: Optional[List[int]] = []
+    counts: Optional[List[int]] = field(default_factory=list)
     overlay_position: int = 0
-    overlay_files: List[Path] = []
+    overlay_files: List[Path] = field(default_factory=list)
 
 
 @dataclass

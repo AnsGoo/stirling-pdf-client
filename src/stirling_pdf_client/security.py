@@ -1,7 +1,7 @@
 from httpx import Client, Response
 from typing import List, Literal, Optional
 from pathlib import Path
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from .utils import save_file
 
 
@@ -53,7 +53,7 @@ class ConvertPdfToImageOption:
 class RedactOption:
     page_numbers: str = "all"
     redactions: bool = False
-    convert_pdf_to_image: ConvertPdfToImageOption
+    convert_pdf_to_image: ConvertPdfToImageOption = field(default_factory=ConvertPdfToImageOption)
     pageRedactionColor: str = "#000000"
 
 

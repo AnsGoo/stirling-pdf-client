@@ -83,8 +83,8 @@ class StampOptions:
 
 @dataclass
 class ImageOptions:
-    page_numbers: Optional[str] = "all"
     image_file: Path
+    page_numbers: Optional[str] = "all"
     x: Optional[float] = 0
     y: Optional[float] = 0
     every_page: Optional[bool] = False

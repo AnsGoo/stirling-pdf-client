@@ -1,7 +1,7 @@
 from httpx import Client, Response
 from typing import Literal, Optional
 from pathlib import Path
-from utils import save_file
+from .utils import save_file
 
 
 class FilterApi:

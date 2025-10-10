@@ -2,7 +2,7 @@ from httpx import Client, Response
 from typing import List, Literal, Optional
 from pathlib import Path
 from dataclasses import dataclass
-from utils import save_file
+from .utils import save_file
 
 
 @dataclass

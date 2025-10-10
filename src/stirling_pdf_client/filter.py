@@ -2,9 +2,10 @@ from httpx import Client, Response
 from typing import Literal, Optional
 from pathlib import Path
 from .utils import save_file
+from .mix import MixApi
 
 
-class FilterApi:
+class FilterApi(MixApi):
     __client: Client
 
     def __init__(self, client: Client) -> None:

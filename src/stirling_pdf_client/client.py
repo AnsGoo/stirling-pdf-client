@@ -15,10 +15,10 @@ class ProxyClient(Client):
     version: Optional[str] = None
     server_status: Optional[str] = None
     def __init__(self, base_url: str, **kwargs):
-        super().__init__(**kwargs)
+        super().__init__(base_url=base_url, **kwargs)
         status =  self.__get_status()
-        self.server_status = status.status
-        self.version = status.version
+        self.server_status = status.get("status", None)
+        self.version = status.get("version", None)
 
 
     def request(self, *args, **kwargs):
@@ -32,8 +32,8 @@ class ProxyClient(Client):
         return response
 
     
-    def __get_status(self) -> str:
-        url = "/api/v1/info/uptime"
+    def __get_status(self: str) -> str:
+        url = "/api/v1/info/status"
         resp = super().request(method="GET", url=url)
         validate_response(resp)
         result =  resp.json()

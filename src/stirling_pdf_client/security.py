@@ -3,6 +3,7 @@ from typing import List, Literal, Optional
 from pathlib import Path
 from dataclasses import dataclass, field
 from .utils import save_file
+from .mix import MixApi
 
 
 @dataclass
@@ -102,7 +103,7 @@ class AddWatermarkOption:
     convert_pdf_to_image: Optional[bool] = False
 
 
-class SecurityApi:
+class SecurityApi(MixApi):
     __client: Client
 
     def __init__(self, client: Client) -> None:

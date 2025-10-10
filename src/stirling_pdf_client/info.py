@@ -1,9 +1,13 @@
 from httpx import Client, Response
 from .type import Status, LoadCount
 from typing import Any, List, Optional
+from .mix import MixApi
+from .utils import requires_server_version
 
 
-class InfoApi:
+
+
+class InfoApi(MixApi):
     __client: Client
 
     def __init__(self, client: Client) -> None:
@@ -15,6 +19,7 @@ class InfoApi:
 
         return resp.text
 
+
     def get_status(self) -> Status:
         url = "/api/v1/info/status"
         resp: Response = self.__client.request(method="GET", url=url)
@@ -24,6 +29,7 @@ class InfoApi:
             version=status_data.get("version", ""), status=status_data.get("status", "")
         )
 
+    @requires_server_version("1.3.2")
     def get_load(self, endpoint: Optional[str] = None) -> int:
         url = "/api/v1/info/load"
         resp: Response = self.__client.request(

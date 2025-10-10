@@ -3,6 +3,7 @@ from pathlib import Path
 from typing import Optional, Literal, List
 from httpx import Client, Response
 from .utils import save_file
+from .mix import MixApi
 
 
 @dataclass
@@ -37,7 +38,7 @@ class CropBox:
     height: Optional[int] = 0
 
 
-class GeneralApi:
+class GeneralApi(MixApi):
     __client: Client
 
     def __init__(self, client: Client) -> None:

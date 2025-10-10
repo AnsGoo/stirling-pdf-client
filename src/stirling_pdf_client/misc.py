@@ -3,6 +3,7 @@ from typing import Literal, Optional, List
 from pathlib import Path
 from dataclasses import dataclass
 from .utils import save_file
+from .mix import MixApi
 
 
 @dataclass
@@ -90,7 +91,7 @@ class ImageOptions:
     every_page: Optional[bool] = False
 
 
-class MiscApi:
+class MiscApi(MixApi):
     __client: Client
 
     def __init__(self, client: Client) -> None:

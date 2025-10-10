@@ -5,7 +5,6 @@ import urllib.parse
 
 
 def save_file(resp: Response, out_path: Path):
-    validate_response(resp)
     target_file = out_path
     if not out_path.is_file():
         filename = get_filename(resp)

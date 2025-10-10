@@ -18,12 +18,12 @@ class ConvertApi:
         save_file(resp=resp, out_path=out_path)
         return resp.text
 
-    def pdf_to_xml(self, file_input: Path, fileId: str) -> Any:
+    def pdf_to_xml(self, file_input: Path, file_id: str) -> Any:
         url = "/api/v1/convert/pdf/xml"
         # 使用二进制模式打开文件，并使用上下文管理器自动关闭
         with open(file_input, "rb") as file:
             files = {"fileInput": file}
-            data = {"fileId": fileId}
+            data = {"fileId": file_id}
 
             resp: Response = self.__client.request(
                 method="POST", url=url, data=data, files=files
@@ -34,7 +34,7 @@ class ConvertApi:
         self,
         out_path: Path,
         file_input: Optional[Path],
-        fileId: Optional[str] = None,
+        file_id: Optional[str] = None,
         output_format: Optional[str] = "doc",
     ) -> str:
         # 确保output_format只能是'doc'或'docx'
@@ -42,8 +42,8 @@ class ConvertApi:
         if output_format not in ["doc", "docx"]:
             raise ValueError("output_format must be either 'doc' or 'docx'")
 
-        if file_input is None and fileId is None:
-            raise ValueError("file_input and fileId must be provided one of")
+        if file_input is None and file_id is None:
+            raise ValueError("file_input and file_id must be provided one of")
 
         # 使用二进制模式打开文件，并使用上下文管理器自动关闭
         url = "/api/v1/convert/pdf/word"
@@ -51,7 +51,7 @@ class ConvertApi:
         if file_input:
             file = open(file_input, "rb")
         files = {"fileInput": file}
-        data = {"fileId": fileId, "outputFormat": output_format}
+        data = {"fileId": file_id, "outputFormat": output_format}
         resp: Response = self.__client.request(
             method="POST", url=url, data=data, files=files
         )
@@ -64,18 +64,18 @@ class ConvertApi:
         self,
         out_path: Path,
         file_input: Optional[Path],
-        fileId: Optional[str] = None,
+        file_id: Optional[str] = None,
         output_format: Optional[str] = "rtf",
     ) -> str:
         url = "/api/v1/convert/pdf/text"
         # 使用二进制模式打开文件，并使用上下文管理器自动关闭
-        if file_input is None and fileId is None:
-            raise ValueError("file_input and fileId must be provided one of")
+        if file_input is None and file_id is None:
+            raise ValueError("file_input and file_id must be provided one of")
         file = None
         if file_input:
             file = open(file_input, "rb")
         files = {"fileInput": file}
-        data = {"fileId": fileId, "outputFormat": output_format}
+        data = {"fileId": file_id, "outputFormat": output_format}
         resp: Response = self.__client.request(
             method="POST", url=url, data=data, files=files
         )
@@ -88,20 +88,20 @@ class ConvertApi:
         self,
         out_path: Path,
         file_input: Optional[Path],
-        fileId: Optional[str] = None,
+        file_id: Optional[str] = None,
         output_format: Optional[str] = "ppt",
     ) -> str:
         url = "/api/v1/convert/pdf/presentation"
         if output_format not in ["ppt", "pptx"]:
             raise ValueError("output_format must be either 'ppt' or 'pptx'")
         # 使用二进制模式打开文件，并使用上下文管理器自动关闭
-        if file_input is None and fileId is None:
-            raise ValueError("file_input and fileId must be provided one of")
+        if file_input is None and file_id is None:
+            raise ValueError("file_input and file_id must be provided one of")
         file = None
         if file_input:
             file = open(file_input, "rb")
         files = {"fileInput": file}
-        data = {"fileId": fileId, "outputFormat": output_format}
+        data = {"fileId": file_id, "outputFormat": output_format}
         resp: Response = self.__client.request(
             method="POST", url=url, data=data, files=files
         )
@@ -114,20 +114,20 @@ class ConvertApi:
         self,
         out_path: Path,
         file_input: Optional[Path],
-        fileId: Optional[str] = None,
+        file_id: Optional[str] = None,
         output_format: Optional[str] = "pdfa",
     ) -> str:
         url = "/api/v1/convert/pdf/pdfa"
         if output_format not in ["pdfa", "pdfa-1"]:
             raise ValueError("output_format must be either 'pdfa' or 'pdfa-1'")
         # 使用二进制模式打开文件，并使用上下文管理器自动关闭
-        if file_input is None and fileId is None:
-            raise ValueError("file_input and fileId must be provided one of")
+        if file_input is None and file_id is None:
+            raise ValueError("file_input and file_id must be provided one of")
         file = None
         if file_input:
             file = open(file_input, "rb")
         files = {"fileInput": file}
-        data = {"fileId": fileId, "outputFormat": output_format}
+        data = {"fileId": file_id, "outputFormat": output_format}
         resp: Response = self.__client.request(
             method="POST", url=url, data=data, files=files
         )
@@ -137,17 +137,17 @@ class ConvertApi:
         return resp.status_code
 
     def pdf_to_markdown(
-        self, out_path: Path, file_input: Optional[Path], fileId: Optional[str] = None
+        self, out_path: Path, file_input: Optional[Path], file_id: Optional[str] = None
     ) -> str:
         url = "/api/v1/convert/pdf/markdown"
         # 使用二进制模式打开文件，并使用上下文管理器自动关闭
-        if file_input is None and fileId is None:
-            raise ValueError("file_input and fileId must be provided one of")
+        if file_input is None and file_id is None:
+            raise ValueError("file_input and file_id must be provided one of")
         file = None
         if file_input:
             file = open(file_input, "rb")
         files = {"fileInput": file}
-        data = {"fileId": fileId}
+        data = {"fileId": file_id}
         resp: Response = self.__client.request(
             method="POST", url=url, data=data, files=files
         )
@@ -160,7 +160,7 @@ class ConvertApi:
         self,
         out_path: Path,
         file_input: Optional[Path],
-        fileId: Optional[str] = None,
+        file_id: Optional[str] = None,
         page_numbers: str = "all",
         image_format: Literal["png", "jpg", "jpeg", "gif", "webp"] = "png",
         single_or_multiple: Literal["single", "multiple"] = "multiple",
@@ -170,14 +170,14 @@ class ConvertApi:
     ) -> str:
         url = "/api/v1/convert/pdf/img"
         # 使用二进制模式打开文件，并使用上下文管理器自动关闭
-        if file_input is None and fileId is None:
-            raise ValueError("file_input and fileId must be provided one of")
+        if file_input is None and file_id is None:
+            raise ValueError("file_input and file_id must be provided one of")
         file = None
         if file_input:
             file = open(file_input, "rb")
         files = {"fileInput": file}
         data = {
-            "fileId": fileId,
+            "fileId": file_id,
             "pageNumbers": page_numbers,
             "imageFormat": image_format,
             "singleOrMultiple": single_or_multiple,
@@ -194,17 +194,17 @@ class ConvertApi:
         return resp.status_code
 
     def pdf_to_html(
-        self, out_path: Path, file_input: Optional[Path], fileId: Optional[str] = None
+        self, out_path: Path, file_input: Optional[Path], file_id: Optional[str] = None
     ) -> str:
         url = "/api/v1/convert/pdf/html"
         # 使用二进制模式打开文件，并使用上下文管理器自动关闭
-        if file_input is None and fileId is None:
-            raise ValueError("file_input and fileId must be provided one of")
+        if file_input is None and file_id is None:
+            raise ValueError("file_input and file_id must be provided one of")
         file = None
         if file_input:
             file = open(file_input, "rb")
         files = {"fileInput": file}
-        data = {"fileId": fileId}
+        data = {"fileId": file_id}
         resp: Response = self.__client.request(
             method="POST", url=url, data=data, files=files
         )
@@ -217,18 +217,18 @@ class ConvertApi:
         self,
         out_path: Path,
         file_input: Optional[Path],
-        fileId: Optional[str] = None,
+        file_id: Optional[str] = None,
         page_numbers: str = "all",
     ) -> str:
         url = "/api/v1/convert/pdf/html"
         # 使用二进制模式打开文件，并使用上下文管理器自动关闭
-        if file_input is None and fileId is None:
-            raise ValueError("file_input and fileId must be provided one of")
+        if file_input is None and file_id is None:
+            raise ValueError("file_input and file_id must be provided one of")
         file = None
         if file_input:
             file = open(file_input, "rb")
         files = {"fileInput": file}
-        data = {"fileId": fileId, "pageNumber": page_numbers}
+        data = {"fileId": file_id, "pageNumber": page_numbers}
         resp: Response = self.__client.request(
             method="POST", url=url, data=data, files=files
         )
@@ -289,16 +289,16 @@ class ConvertApi:
         self,
         out_path: Path,
         file_input: Optional[Path] = None,
-        fileId: Optional[str] = None,
+        file_id: Optional[str] = None,
         zoom: Optional[float] = 1.0,
     ) -> str:
         url = "/api/v1/convert/pdf/html"
-        if file_input is None and fileId is None:
-            raise ValueError("file_input and fileId must be provided one of")
+        if file_input is None and file_id is None:
+            raise ValueError("file_input and file_id must be provided one of")
 
         file = open(file_input, "rb")
         files = {"fileInput": file}
-        data = {"zoom": zoom, "fileId": fileId}
+        data = {"zoom": zoom, "fileId": file_id}
         resp: Response = self.__client.request(
             method="POST", url=url, files=files, data=data
         )
@@ -322,15 +322,15 @@ class ConvertApi:
         self,
         out_path: Path,
         file_input: Optional[Path] = None,
-        fileId: Optional[str] = None,
+        file_id: Optional[str] = None,
         include_attachments: Optional[bool] = False,
         max_attachment_size_mb: Optional[int] = 10,
         download_html: Optional[bool] = False,
         include_all_recipients: Optional[bool] = True,
     ) -> str:
         url = "/api/v1/convert/pdf/html"
-        if file_input is None and fileId is None:
-            raise ValueError("file_input and fileId must be provided one of")
+        if file_input is None and file_id is None:
+            raise ValueError("file_input and file_id must be provided one of")
         file = None
         if file_input:
             file = open(file_input, "rb")

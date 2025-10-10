@@ -51,11 +51,11 @@ class GeneralApi:
         self,
         out_path: Path,
         file_input: Optional[Path] = None,
-        fileId: Optional[str] = None,
+        file_id: Optional[str] = None,
         options: SplitPdfBySectionsOptions = SplitPdfBySectionsOptions(),
     ) -> str:
-        if file_input is None and fileId is None:
-            raise ValueError("file_input and fileId must be provided one of")
+        if file_input is None and file_id is None:
+            raise ValueError("file_input and file_id must be provided one of")
         url = "/api/v1/general/split-pdf-by-sections"
         data = {}
         files = {}
@@ -63,8 +63,8 @@ class GeneralApi:
         if file_input is not None:
             file = open(file_input, "rb")
             files["fileInput"] = file
-        if fileId is not None:
-            data["fileId"] = fileId
+        if file_id is not None:
+            data["fileId"] = file_id
         data.update(
             {
                 "horizontalDivisions": options.horizontal_divisions,
@@ -84,11 +84,11 @@ class GeneralApi:
         self,
         out_path: Path,
         file_input: Optional[Path] = None,
-        fileId: Optional[str] = None,
+        file_id: Optional[str] = None,
         options: SplitPdfByChaptersOptions = SplitPdfByChaptersOptions(),
     ) -> str:
-        if file_input is None and fileId is None:
-            raise ValueError("file_input and fileId must be provided one of")
+        if file_input is None and file_id is None:
+            raise ValueError("file_input and file_id must be provided one of")
         url = "/api/v1/general/split-pdf-by-chapters"
         data = {}
         file = None
@@ -96,8 +96,8 @@ class GeneralApi:
         if file_input is not None:
             file = open(file_input, "rb")
             files["fileInput"] = file
-        if fileId is not None:
-            data["fileId"] = fileId
+        if file_id is not None:
+            data["fileId"] = file_id
         data.update(
             {
                 "includeMetadata": options.include_metadata,
@@ -117,11 +117,11 @@ class GeneralApi:
         self,
         out_path: Path,
         file_input: Optional[Path] = None,
-        fileId: Optional[str] = None,
+        file_id: Optional[str] = None,
         page_numbers: str = "all",
     ) -> str:
-        if file_input is None and fileId is None:
-            raise ValueError("file_input and fileId must be provided one of")
+        if file_input is None and file_id is None:
+            raise ValueError("file_input and file_id must be provided one of")
         url = "/api/v1/general/split-pages"
         data = {}
         file = None
@@ -129,8 +129,8 @@ class GeneralApi:
         if file_input is not None:
             file = open(file_input, "rb")
             files["fileInput"] = file
-        if fileId is not None:
-            data["fileId"] = fileId
+        if file_id is not None:
+            data["fileId"] = file_id
         data.update(
             {
                 "pageNumbers": page_numbers,
@@ -148,12 +148,12 @@ class GeneralApi:
         self,
         out_path: Path,
         file_input: Optional[Path] = None,
-        fileId: Optional[str] = None,
+        file_id: Optional[str] = None,
         split_type: Literal["size", "page", "document"] = "size",
         split_value: str = "10MB",
     ) -> str:
-        if file_input is None and fileId is None:
-            raise ValueError("file_input and fileId must be provided one of")
+        if file_input is None and file_id is None:
+            raise ValueError("file_input and file_id must be provided one of")
         url = "/api/v1/general/split-by-size-or-count"
         SPLIT_TYPE_MAP = {
             "size": 0,
@@ -169,8 +169,8 @@ class GeneralApi:
         if file_input is not None:
             file = open(file_input, "rb")
             files["fileInput"] = file
-        if fileId is not None:
-            data["fileId"] = fileId
+        if file_id is not None:
+            data["fileId"] = file_id
         resp: Response = self.__client.request(
             method="POST", url=url, data=data, files=files
         )
@@ -183,14 +183,14 @@ class GeneralApi:
         self,
         out_path: Path,
         file_input: Optional[Path] = None,
-        fileId: Optional[str] = None,
+        file_id: Optional[str] = None,
         page_size: Literal[
             "A0", "A1", "A2", "A3", "A4", "A5", "A6", "LETTER", "LEGAL", "KEEP"
         ] = "A4",
         scale_factor: float = 1.0,
     ) -> str:
-        if file_input is None and fileId is None:
-            raise ValueError("file_input and fileId must be provided one of")
+        if file_input is None and file_id is None:
+            raise ValueError("file_input and file_id must be provided one of")
         url = "/api/v1/general/scale-page"
         data = {}
         file = None
@@ -198,8 +198,8 @@ class GeneralApi:
         if file_input is not None:
             file = open(file_input, "rb")
             files["fileInput"] = file
-        if fileId is not None:
-            data["fileId"] = fileId
+        if file_id is not None:
+            data["fileId"] = file_id
         data.update(
             {
                 "pageSize": page_size,
@@ -218,11 +218,11 @@ class GeneralApi:
         self,
         out_path: Path,
         file_input: Optional[Path] = None,
-        fileId: Optional[str] = None,
+        file_id: Optional[str] = None,
         angle: Literal[0, 90, 180, 270] = 90,
     ) -> str:
-        if file_input is None and fileId is None:
-            raise ValueError("file_input and fileId must be provided one of")
+        if file_input is None and file_id is None:
+            raise ValueError("file_input and file_id must be provided one of")
         url = "/api/v1/general/rotate-page"
         data = {}
         file = None
@@ -230,8 +230,8 @@ class GeneralApi:
         if file_input is not None:
             file = open(file_input, "rb")
             files["fileInput"] = file
-        if fileId is not None:
-            data["fileId"] = fileId
+        if file_id is not None:
+            data["fileId"] = file_id
         data.update(
             {
                 "angle": angle,
@@ -249,11 +249,11 @@ class GeneralApi:
         self,
         out_path: Path,
         file_input: Optional[Path] = None,
-        fileId: Optional[str] = None,
+        file_id: Optional[str] = None,
         page_numbers: str = "all",
     ) -> str:
-        if file_input is None and fileId is None:
-            raise ValueError("file_input and fileId must be provided one of")
+        if file_input is None and file_id is None:
+            raise ValueError("file_input and file_id must be provided one of")
         url = "/api/v1/general/remove-pages"
         data = {}
         file = None
@@ -261,8 +261,8 @@ class GeneralApi:
         if file_input is not None:
             file = open(file_input, "rb")
             files["fileInput"] = file
-        if fileId is not None:
-            data["fileId"] = fileId
+        if file_id is not None:
+            data["fileId"] = file_id
         data.update(
             {
                 "pageNumbers": page_numbers,
@@ -280,10 +280,10 @@ class GeneralApi:
         self,
         out_path: Path,
         file_input: Optional[Path] = None,
-        fileId: Optional[str] = None,
+        file_id: Optional[str] = None,
     ) -> str:
-        if file_input is None and fileId is None:
-            raise ValueError("file_input and fileId must be provided one of")
+        if file_input is None and file_id is None:
+            raise ValueError("file_input and file_id must be provided one of")
         url = "/api/v1/general/remove-image-pdf"
         data = {}
         file = None
@@ -291,8 +291,8 @@ class GeneralApi:
         if file_input is not None:
             file = open(file_input, "rb")
             files["fileInput"] = file
-        if fileId is not None:
-            data["fileId"] = fileId
+        if file_id is not None:
+            data["fileId"] = file_id
         resp: Response = self.__client.request(
             method="POST", url=url, data=data, files=files
         )
@@ -305,7 +305,7 @@ class GeneralApi:
         self,
         out_path: Path,
         file_input: Optional[Path] = None,
-        fileId: Optional[str] = None,
+        file_id: Optional[str] = None,
         page_numbers: str = "all",
         custom_mode: Literal[
             "CUSTOM",
@@ -321,8 +321,8 @@ class GeneralApi:
             "DUPLICATE",
         ] = "CUSTOM",
     ) -> str:
-        if file_input is None and fileId is None:
-            raise ValueError("file_input and fileId must be provided one of")
+        if file_input is None and file_id is None:
+            raise ValueError("file_input and file_id must be provided one of")
         url = "/api/v1/general/rearrange-page"
         data = {}
         file = None
@@ -330,8 +330,8 @@ class GeneralApi:
         if file_input is not None:
             file = open(file_input, "rb")
             files["fileInput"] = file
-        if fileId is not None:
-            data["fileId"] = fileId
+        if file_id is not None:
+            data["fileId"] = file_id
         data.update(
             {
                 "pageNumbers": page_numbers,
@@ -350,10 +350,10 @@ class GeneralApi:
         self,
         out_path: Path,
         file_input: Optional[Path] = None,
-        fileId: Optional[str] = None,
+        file_id: Optional[str] = None,
     ) -> str:
-        if file_input is None and fileId is None:
-            raise ValueError("file_input and fileId must be provided one of")
+        if file_input is None and file_id is None:
+            raise ValueError("file_input and file_id must be provided one of")
         url = "/api/v1/general/pdf-to-single-page"
         data = {}
         file = None
@@ -361,8 +361,8 @@ class GeneralApi:
         if file_input is not None:
             file = open(file_input, "rb")
             files["fileInput"] = file
-        if fileId is not None:
-            data["fileId"] = fileId
+        if file_id is not None:
+            data["fileId"] = file_id
         resp: Response = self.__client.request(
             method="POST", url=url, data=data, files=files
         )
@@ -376,10 +376,10 @@ class GeneralApi:
         out_path: Path,
         options: OverlayPdfOptions,
         file_input: Optional[Path] = None,
-        fileId: Optional[str] = None,
+        file_id: Optional[str] = None,
     ) -> str:
-        if file_input is None and fileId is None:
-            raise ValueError("file_input and fileId must be provided one of")
+        if file_input is None and file_id is None:
+            raise ValueError("file_input and file_id must be provided one of")
         url = "/api/v1/general/overlay-pdfs"
         data = {}
         file = None
@@ -387,8 +387,8 @@ class GeneralApi:
         if file_input is not None:
             file = open(file_input, "rb")
             files["fileInput"] = file
-        if fileId is not None:
-            data["fileId"] = fileId
+        if file_id is not None:
+            data["fileId"] = file_id
 
         overlay_files = []
         if options.overlay_files:
@@ -455,11 +455,11 @@ class GeneralApi:
         self,
         out_path: Path,
         file_input: Optional[Path] = None,
-        fileId: Optional[str] = None,
+        file_id: Optional[str] = None,
         options: CropBox = CropBox(),
     ) -> str:
-        if file_input is None and fileId is None:
-            raise ValueError("file_input and fileId must be provided one of")
+        if file_input is None and file_id is None:
+            raise ValueError("file_input and file_id must be provided one of")
         url = "/api/v1/general/crop"
         file = None
         files = {}
@@ -468,8 +468,8 @@ class GeneralApi:
             files["fileInput"] = file
 
         data = {}
-        if fileId is not None:
-            data["fileId"] = fileId
+        if file_id is not None:
+            data["fileId"] = file_id
 
         data.update(
             {

@@ -100,20 +100,20 @@ class MiscApi:
         self,
         out_path: Path,
         file_input: Optional[Path],
-        fileId: Optional[str] = None,
+        file_id: Optional[str] = None,
         delete_all: Optional[bool] = False,
         options: Optional[UpdateMetadataOptions] = None,
     ) -> str:
         url = "/api/v1/misc/update-metadata"
-        if file_input is None and fileId is None:
-            raise ValueError("file_input and fileId must be provided one of")
+        if file_input is None and file_id is None:
+            raise ValueError("file_input and file_id must be provided one of")
 
         file = None
         if file_input:
             file = open(file_input, "rb")
         files = {"fileInput": file}
         data = {
-            "fileId": fileId,
+            "fileId": file_id,
             "deleteAll": delete_all,
         }
         if options:
@@ -140,17 +140,17 @@ class MiscApi:
         return resp.text
 
     def unlock_pdf_forms(
-        self, out_path: Path, file_input: Optional[Path], fileId: Optional[str] = None
+        self, out_path: Path, file_input: Optional[Path], file_id: Optional[str] = None
     ) -> str:
         url = "/api/v1/misc/unlock-pdf-forms"
-        if file_input is None and fileId is None:
-            raise ValueError("file_input and fileId must be provided one of")
+        if file_input is None and file_id is None:
+            raise ValueError("file_input and file_id must be provided one of")
 
         file = None
         if file_input:
             file = open(file_input, "rb")
         files = {"fileInput": file}
-        data = {"fileId": fileId}
+        data = {"fileId": file_id}
         resp: Response = self.__client.request(
             method="POST", url=url, data=data, files=files
         )
@@ -216,7 +216,7 @@ class MiscApi:
         self,
         out_path: Path,
         file_input: Optional[Path],
-        fileId: Optional[str] = None,
+        file_id: Optional[str] = None,
         replace_and_invert_option: Literal[
             "HIGH_CONTRAST_COLOR", "CUSTOM_COLOR", "FULL_INVERSION"
         ] = "HIGH_CONTRAST_COLOR",
@@ -232,7 +232,7 @@ class MiscApi:
             file = open(file_input, "rb")
         files = {"fileInput": file}
         data = {
-            "fileId": fileId,
+            "fileId": file_id,
             "replaceAndInvertOption": replace_and_invert_option,
             "highContrastColorCombination": high_contrast_color_combination,
         }
@@ -252,16 +252,16 @@ class MiscApi:
         return resp.text
 
     def repair(
-        self, out_path: Path, file_input: Optional[Path], fileId: Optional[str] = None
+        self, out_path: Path, file_input: Optional[Path], file_id: Optional[str] = None
     ) -> str:
         url = "/api/v1/misc/repair"
-        if file_input is None and fileId is None:
-            raise ValueError("file_input and fileId must be provided one of")
+        if file_input is None and file_id is None:
+            raise ValueError("file_input and file_id must be provided one of")
         file = None
         if file_input:
             file = open(file_input, "rb")
         files = {"fileInput": file}
-        data = {"fileId": fileId}
+        data = {"fileId": file_id}
         resp: Response = self.__client.request(
             method="POST", url=url, data=data, files=files
         )
@@ -274,18 +274,18 @@ class MiscApi:
         self,
         out_path: Path,
         file_input: Optional[Path],
-        fileId: Optional[str] = None,
+        file_id: Optional[str] = None,
         threshold: Optional[int] = 10,
         white_percent: Optional[float] = 99.9,
     ) -> str:
         url = "/api/v1/misc/remove-blanks"
-        if file_input is None and fileId is None:
-            raise ValueError("file_input and fileId must be provided one of")
+        if file_input is None and file_id is None:
+            raise ValueError("file_input and file_id must be provided one of")
         file = None
         if file_input:
             file = open(file_input, "rb")
         files = {"fileInput": file}
-        data = {"fileId": fileId, "threshold": threshold, "whitePercent": white_percent}
+        data = {"fileId": file_id, "threshold": threshold, "whitePercent": white_percent}
         resp: Response = self.__client.request(
             method="POST", url=url, data=data, files=files
         )
@@ -299,7 +299,7 @@ class MiscApi:
         out_path: Path,
         languages: Optional[List[str]],
         file_input: Optional[Path],
-        fileId: Optional[str] = None,
+        file_id: Optional[str] = None,
         orc_type: Literal["skip-text", "force-ocr", "Normal"] = "skip-text",
         orc_render_type: Literal["hocr", "sandwich"] = "hocr",
         options: Optional[OcrPdfOptions] = {
@@ -311,14 +311,14 @@ class MiscApi:
         },
     ) -> str:
         url = "/api/v1/misc/orc-pdf"
-        if file_input is None and fileId is None:
-            raise ValueError("file_input and fileId must be provided one of")
+        if file_input is None and file_id is None:
+            raise ValueError("file_input and file_id must be provided one of")
         file = None
         if file_input:
             file = open(file_input, "rb")
         files = {"fileInput": file}
         data = {
-            "fileId": fileId,
+            "fileId": file_id,
             "languages": languages,
             "orcType": orc_type,
             "orcRenderType": orc_render_type,
@@ -345,17 +345,17 @@ class MiscApi:
         self,
         out_path: Path,
         file_input: Optional[Path],
-        fileId: Optional[str] = None,
+        file_id: Optional[str] = None,
         flatten_only_forms: Optional[bool] = False,
     ) -> str:
         url = "/api/v1/misc/flatten"
-        if file_input is None and fileId is None:
-            raise ValueError("file_input and fileId must be provided one of")
+        if file_input is None and file_id is None:
+            raise ValueError("file_input and file_id must be provided one of")
         file = None
         if file_input:
             file = open(file_input, "rb")
         files = {"fileInput": file}
-        data = {"fileId": fileId, "flattenOnlyForms": flatten_only_forms}
+        data = {"fileId": file_id, "flattenOnlyForms": flatten_only_forms}
         resp: Response = self.__client.request(
             method="POST", url=url, data=data, files=files
         )
@@ -368,18 +368,18 @@ class MiscApi:
         self,
         out_path: Path,
         file_input: Optional[Path],
-        fileId: Optional[str] = None,
+        file_id: Optional[str] = None,
         format: Literal["png", "jpg", "jpeg", "gif"] = "png",
         allow_duplicates: Optional[bool] = False,
     ) -> str:
         url = "/api/v1/misc/extract-images"
-        if file_input is None and fileId is None:
-            raise ValueError("file_input and fileId must be provided one of")
+        if file_input is None and file_id is None:
+            raise ValueError("file_input and file_id must be provided one of")
         file = None
         if file_input:
             file = open(file_input, "rb")
         files = {"fileInput": file}
-        data = {"fileId": fileId, "format": format, "allowDuplicates": allow_duplicates}
+        data = {"fileId": file_id, "format": format, "allowDuplicates": allow_duplicates}
         resp: Response = self.__client.request(
             method="POST", url=url, data=data, files=files
         )
@@ -419,16 +419,16 @@ class MiscApi:
         return resp.text
 
     def decompress_pdf(
-        self, out_path: Path, file_input: Optional[Path], fileId: Optional[str] = None
+        self, out_path: Path, file_input: Optional[Path], file_id: Optional[str] = None
     ) -> str:
         url = "/api/v1/misc/decompress-pdf"
-        if file_input is None and fileId is None:
-            raise ValueError("file_input and fileId must be provided one of")
+        if file_input is None and file_id is None:
+            raise ValueError("file_input and file_id must be provided one of")
         file = None
         if file_input:
             file = open(file_input, "rb")
         files = {"fileInput": file}
-        data = {"fileId": fileId}
+        data = {"fileId": file_id}
         resp: Response = self.__client.request(
             method="POST", url=url, data=data, files=files
         )
@@ -441,7 +441,7 @@ class MiscApi:
         self,
         out_path: Path,
         file_input: Optional[Path],
-        fileId: Optional[str] = None,
+        file_id: Optional[str] = None,
         optimize_level: Optional[int] = 5,
         expected_output_size: Optional[int] = 25,
         linearize: Optional[bool] = False,
@@ -449,14 +449,14 @@ class MiscApi:
         grayscale: Optional[bool] = False,
     ) -> str:
         url = "/api/v1/misc/compress-pdf"
-        if file_input is None and fileId is None:
-            raise ValueError("file_input and fileId must be provided one of")
+        if file_input is None and file_id is None:
+            raise ValueError("file_input and file_id must be provided one of")
         file = None
         if file_input:
             file = open(file_input, "rb")
         files = {"fileInput": file}
         data = {
-            "fileId": fileId,
+            "fileId": file_id,
             "optimizeLevel": optimize_level,
             "expectedOutputSize": f"{expected_output_size}kb",
             "linearize": linearize,
@@ -475,16 +475,16 @@ class MiscApi:
         self,
         out_path: Path,
         file_input: Optional[Path],
-        fileId: Optional[str] = None,
+        file_id: Optional[str] = None,
     ) -> str:
         url = "/api/v1/misc/auto-split-pdf"
-        if file_input is None and fileId is None:
-            raise ValueError("file_input and fileId must be provided one of")
+        if file_input is None and file_id is None:
+            raise ValueError("file_input and file_id must be provided one of")
         file = None
         if file_input:
             file = open(file_input, "rb")
         files = {"fileInput": file}
-        data = {"fileId": fileId}
+        data = {"fileId": file_id}
         resp: Response = self.__client.request(
             method="POST", url=url, data=data, files=files
         )
@@ -497,17 +497,17 @@ class MiscApi:
         self,
         out_path: Path,
         file_input: Optional[Path],
-        fileId: Optional[str] = None,
+        file_id: Optional[str] = None,
         use_first_text_as_fallback: Optional[bool] = False,
     ) -> str:
         url = "/api/v1/misc/auto-rename"
-        if file_input is None and fileId is None:
-            raise ValueError("file_input and fileId must be provided one of")
+        if file_input is None and file_id is None:
+            raise ValueError("file_input and file_id must be provided one of")
         file = None
         if file_input:
             file = open(file_input, "rb")
         files = {"fileInput": file}
-        data = {"fileId": fileId, "useFirstTextAsFallback": use_first_text_as_fallback}
+        data = {"fileId": file_id, "useFirstTextAsFallback": use_first_text_as_fallback}
         resp: Response = self.__client.request(
             method="POST", url=url, data=data, files=files
         )
@@ -520,18 +520,18 @@ class MiscApi:
         self,
         out_path: Path,
         file_input: Optional[Path],
-        fileId: Optional[str] = None,
+        file_id: Optional[str] = None,
         options: Optional[StampOptions] = StampOptions(),
     ) -> str:
         url = "/api/v1/misc/add-stamp"
-        if file_input is None and fileId is None:
-            raise ValueError("file_input and fileId must be provided one of")
+        if file_input is None and file_id is None:
+            raise ValueError("file_input and file_id must be provided one of")
         file = None
         if file_input:
             file = open(file_input, "rb")
         files = {"fileInput": file}
         data = {
-            "fileId": fileId,
+            "fileId": file_id,
         }
         POSITION_MAPPING = {
             "topLeft": 7,
@@ -575,17 +575,17 @@ class MiscApi:
         out_path: Path,
         file_input: Optional[Path],
         options: Optional[ImageOptions],
-        fileId: Optional[str] = None,
+        file_id: Optional[str] = None,
     ) -> str:
         url = "/api/v1/misc/add-image"
-        if file_input is None and fileId is None:
-            raise ValueError("file_input and fileId must be provided one of")
+        if file_input is None and file_id is None:
+            raise ValueError("file_input and file_id must be provided one of")
         file = None
         if file_input:
             file = open(file_input, "rb")
         files = {"fileInput": file}
         data = {
-            "fileId": fileId,
+            "fileId": file_id,
         }
         with open(options.image_file, "rb") as f:
             files["image"] = f
@@ -610,11 +610,11 @@ class MiscApi:
         out_path: Path,
         file_input: Optional[Path],
         attachments: List[Path],
-        fileId: Optional[str] = None,
+        file_id: Optional[str] = None,
     ) -> str:
         url = "/api/v1/misc/add-attachments"
-        if file_input is None and fileId is None:
-            raise ValueError("file_input and fileId must be provided one of")
+        if file_input is None and file_id is None:
+            raise ValueError("file_input and file_id must be provided one of")
         file = None
         if file_input:
             file = open(file_input, "rb")
@@ -622,7 +622,7 @@ class MiscApi:
         for attachment in attachments:
             attachments_files.append(open(attachment, "rb"))
         files = {"fileInput": file, "attachments": attachments_files}
-        data = {"fileId": fileId}
+        data = {"fileId": file_id}
         resp: Response = self.__client.request(
             method="POST", url=url, data=data, files=files
         )

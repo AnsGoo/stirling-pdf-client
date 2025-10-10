@@ -1,5 +1,3 @@
-from operator import truediv
-from os import name
 from httpx import Client, Response
 from typing import List, Literal, Optional
 from pathlib import Path
@@ -114,14 +112,14 @@ class SecurityApi:
         self,
         file_input: Optional[Path],
         cert_file: [Path],
-        fileId: Optional[str] = None,
+        file_id: Optional[str] = None,
     ) -> ValidateSignatureResult:
-        if file_input is None and fileId is None:
-            raise ValueError("file_input and fileId must be provided one of")
+        if file_input is None and file_id is None:
+            raise ValueError("file_input and file_id must be provided one of")
         file = None
         if file_input:
             file = open(file_input, "rb")
-        data = {"fileId": fileId}
+        data = {"fileId": file_id}
         cert = open(cert_file, "rb")
         files = {"fileInput": file, "certFile": cert}
         url = "/api/v1/security/validate-signature"
@@ -138,15 +136,15 @@ class SecurityApi:
         out_path: Path,
         file_input: Optional[Path],
         options: SanitizePdfOption,
-        fileId: Optional[str] = None,
+        file_id: Optional[str] = None,
     ) -> str:
-        if file_input is None and fileId is None:
-            raise ValueError("file_input and fileId must be provided one of")
+        if file_input is None and file_id is None:
+            raise ValueError("file_input and file_id must be provided one of")
         file = None
         if file_input:
             file = open(file_input, "rb")
         data = {
-            "fileId": fileId,
+            "fileId": file_id,
         }
         data.update(
             {
@@ -172,14 +170,14 @@ class SecurityApi:
         out_path: Path,
         password: str,
         file_input: Optional[Path],
-        fileId: Optional[str] = None,
+        file_id: Optional[str] = None,
     ) -> str:
-        if file_input is None and fileId is None:
-            raise ValueError("file_input and fileId must be provided one of")
+        if file_input is None and file_id is None:
+            raise ValueError("file_input and file_id must be provided one of")
         file = None
         if file_input:
             file = open(file_input, "rb")
-        data = {"fileId": fileId, "password": password}
+        data = {"fileId": file_id, "password": password}
         url = "/api/v1/security/remove-password"
         resp: Response = self.__client.request(
             method="POST", url=url, files={"fileInput": file}, data=data
@@ -193,15 +191,15 @@ class SecurityApi:
         self,
         out_path: Path,
         file_input: Optional[Path],
-        fileId: Optional[str] = None,
+        file_id: Optional[str] = None,
     ) -> str:
-        if file_input is None and fileId is None:
-            raise ValueError("file_input and fileId must be provided one of")
+        if file_input is None and file_id is None:
+            raise ValueError("file_input and file_id must be provided one of")
         file = None
         if file_input:
             file = open(file_input, "rb")
         data = {
-            "fileId": fileId,
+            "fileId": file_id,
         }
         url = "/api/v1/security/remove-cert-sign"
         resp: Response = self.__client.request(
@@ -217,15 +215,15 @@ class SecurityApi:
         out_path: Path,
         options: RedactOption,
         file_input: Optional[Path],
-        fileId: Optional[str] = None,
+        file_id: Optional[str] = None,
     ) -> str:
-        if file_input is None and fileId is None:
-            raise ValueError("file_input and fileId must be provided one of")
+        if file_input is None and file_id is None:
+            raise ValueError("file_input and file_id must be provided one of")
         file = None
         if file_input:
             file = open(file_input, "rb")
         data = {
-            "fileId": fileId,
+            "fileId": file_id,
         }
         data.update(
             {
@@ -252,15 +250,15 @@ class SecurityApi:
         return resp.text
 
     def get_info_on_pdf(
-        self, file_input: Optional[Path], fileId: Optional[str] = None
+        self, file_input: Optional[Path], file_id: Optional[str] = None
     ) -> str:
-        if file_input is None and fileId is None:
-            raise ValueError("file_input and fileId must be provided one of")
+        if file_input is None and file_id is None:
+            raise ValueError("file_input and file_id must be provided one of")
         file = None
         if file_input:
             file = open(file_input, "rb")
         data = {
-            "fileId": fileId,
+            "fileId": file_id,
         }
         url = "/api/v1/security/get-info-on-pdf"
         resp: Response = self.__client.request(
@@ -278,15 +276,15 @@ class SecurityApi:
         options: AddPasswordOption,
         file_input: Optional[Path],
         key_length: int = 256,
-        fileId: Optional[str] = None,
+        file_id: Optional[str] = None,
     ) -> str:
-        if file_input is None and fileId is None:
-            raise ValueError("file_input and fileId must be provided one of")
+        if file_input is None and file_id is None:
+            raise ValueError("file_input and file_id must be provided one of")
         file = None
         if file_input:
             file = open(file_input, "rb")
         data = {
-            "fileId": fileId,
+            "fileId": file_id,
             "password": password,
             "ownerPassword": owner_password,
             "keyLength": key_length,
@@ -317,14 +315,14 @@ class SecurityApi:
         out_path: Path,
         options: AddWatermarkOption,
         file_input: Optional[Path],
-        fileId: Optional[str] = None,
+        file_id: Optional[str] = None,
     ) -> str:
-        if file_input is None and fileId is None:
-            raise ValueError("file_input and fileId must be provided one of")
+        if file_input is None and file_id is None:
+            raise ValueError("file_input and file_id must be provided one of")
         file = None
         if file_input:
             file = open(file_input, "rb")
-        data = {"fileId": fileId}
+        data = {"fileId": file_id}
         data.update(
             {
                 "watermarkType": options.watermark_type,
@@ -353,15 +351,15 @@ class SecurityApi:
         self,
         out_path: Path,
         file_input: Optional[Path],
-        fileId: Optional[str] = None,
+        file_id: Optional[str] = None,
         options: CertSignOption = CertSignOption(),
     ) -> str:
-        if file_input is None and fileId is None:
-            raise ValueError("file_input and fileId must be provided one of")
+        if file_input is None and file_id is None:
+            raise ValueError("file_input and file_id must be provided one of")
         file = None
         if file_input:
             file = open(file_input, "rb")
-        data = {"fileId": fileId}
+        data = {"fileId": file_id}
         url = "/api/v1/security/cert-sign"
         data.update(
             {

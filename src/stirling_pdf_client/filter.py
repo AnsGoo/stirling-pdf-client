@@ -1,7 +1,6 @@
 from httpx import Client, Response
-from typing import List, Literal, Optional
+from typing import Literal, Optional
 from pathlib import Path
-from dataclasses import dataclass
 from utils import save_file
 
 

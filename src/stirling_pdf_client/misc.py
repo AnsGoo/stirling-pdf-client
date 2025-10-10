@@ -285,7 +285,11 @@ class MiscApi:
         if file_input:
             file = open(file_input, "rb")
         files = {"fileInput": file}
-        data = {"fileId": file_id, "threshold": threshold, "whitePercent": white_percent}
+        data = {
+            "fileId": file_id,
+            "threshold": threshold,
+            "whitePercent": white_percent,
+        }
         resp: Response = self.__client.request(
             method="POST", url=url, data=data, files=files
         )
@@ -379,7 +383,11 @@ class MiscApi:
         if file_input:
             file = open(file_input, "rb")
         files = {"fileInput": file}
-        data = {"fileId": file_id, "format": format, "allowDuplicates": allow_duplicates}
+        data = {
+            "fileId": file_id,
+            "format": format,
+            "allowDuplicates": allow_duplicates,
+        }
         resp: Response = self.__client.request(
             method="POST", url=url, data=data, files=files
         )

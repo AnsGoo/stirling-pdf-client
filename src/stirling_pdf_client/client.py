@@ -8,7 +8,6 @@ from .general import GeneralApi
 from .filter import FilterApi
 
 
-
 class StirlingPDFClient:
     def __init__(
         self,

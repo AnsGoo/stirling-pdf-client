@@ -110,8 +110,8 @@ class SecurityApi:
 
     def validate_signature(
         self,
-        file_input: Optional[Path],
         cert_file: [Path],
+        file_input: Optional[Path] = None,
         file_id: Optional[str] = None,
     ) -> ValidateSignatureResult:
         if file_input is None and file_id is None:

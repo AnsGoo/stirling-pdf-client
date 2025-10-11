@@ -1,7 +1,6 @@
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Optional, Literal, List
-from dataclasses import dataclass, field
 from httpx import Client, Response
 from .utils import save_file
 from .mix import MixApi

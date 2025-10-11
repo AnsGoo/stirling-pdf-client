@@ -1,7 +1,6 @@
 from httpx import Client
 
 
-from httpx import Client
 
 
 class MixApi:

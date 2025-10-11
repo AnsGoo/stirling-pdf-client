@@ -1,7 +1,6 @@
 from httpx import Client, Response
 from typing import Literal, Optional
 from pathlib import Path
-from httpx import Client, Response
 from .utils import save_file
 from .mix import MixApi
 

@@ -1,12 +1,23 @@
-from httpx import Response
 from pathlib import Path
 import re
 from urllib.parse import unquote
 from typing import Callable, Any
 import functools
+from httpx import Response
 
 
 def save_file(resp: Response, out_path: Path):
+    """
+    将HTTP响应内容保存到文件中。
+
+    根据out_path参数的类型和存在性决定如何保存文件：
+    - 如果out_path是现有文件，则直接写入该文件
+    - 如果out_path是目录，则从响应头中提取文件名并在该目录下创建文件
+
+    Args:
+        resp: 包含要保存内容的HTTP响应对象
+        out_path: 输出文件路径或目录路径
+    """
     target_file = out_path
     if not out_path.is_file():
         filename = get_filename(resp)
@@ -16,7 +27,20 @@ def save_file(resp: Response, out_path: Path):
 
 
 def get_filename(resp: Response, default_filename="unkown_filename") -> str:
-    """提取文件名的主方法"""
+    """
+    从HTTP响应中提取文件名。
+
+    首先尝试从Content-Disposition响应头中提取文件名，
+    处理可能的UTF-8编码，并移除文件名中的非法字符。
+    如果无法提取，则返回默认文件名。
+
+    Args:
+        resp: HTTP响应对象
+        default_filename: 无法提取文件名时的默认值
+
+    Returns:
+        str: 提取或生成的文件名
+    """
     headers = resp.headers
     content_disposition = headers.get("content-disposition", "")
 

@@ -49,24 +49,9 @@ def convert():
     )
 
 
-def test_version_decorator():
-    # 初始化客户端，指向您的Stirling PDF服务器
-    client = StirlingPDFClient(base_url="http://192.168.124.18:18080")
-
-    try:
-        print("\n--- 测试版本检查装饰器 ---")
-        print(f"服务器版本: {client.info.get_status().version}")
-        print("尝试调用需要2.0.0版本的get_load方法...")
-        load = client.info.get_load()
-        print(f"调用成功，服务器载荷: {load}")
-    except Exception as e:
-        print(f"调用失败: {e}")
-
-
 def main():
     debug_info()
-    test_version_decorator()
-    # convert()
+    convert()
 
 
 if __name__ == "__main__":

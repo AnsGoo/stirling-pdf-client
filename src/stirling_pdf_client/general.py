@@ -1,6 +1,7 @@
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Optional, Literal, List
+from dataclasses import dataclass, field
 from httpx import Client, Response
 from .utils import save_file
 from .mix import MixApi
@@ -8,6 +9,15 @@ from .mix import MixApi
 
 @dataclass
 class SplitPdfBySectionsOptions:
+    """
+    按部分分割PDF的选项类。
+
+    Attributes:
+        horizontal_divisions: 水平分割数
+        vertical_divisions: 垂直分割数
+        merge: 是否合并结果
+    """
+
     horizontal_divisions: Optional[int] = 0
     vertical_divisions: Optional[int] = 1
     merge: Optional[bool] = True
@@ -15,6 +25,15 @@ class SplitPdfBySectionsOptions:
 
 @dataclass
 class SplitPdfByChaptersOptions:
+    """
+    按章节分割PDF的选项类。
+
+    Attributes:
+        include_metadata: 是否包含元数据
+        allow_duplicates: 是否允许重复
+        bookmark_level: 书签级别
+    """
+
     include_metadata: Optional[bool] = True
     allow_duplicates: Optional[bool] = True
     bookmark_level: Optional[int] = 2
@@ -22,6 +41,16 @@ class SplitPdfByChaptersOptions:
 
 @dataclass
 class OverlayPdfOptions:
+    """
+    叠加PDF的选项类。
+
+    Attributes:
+        overlay_mode: 叠加模式
+        counts: 计数列表
+        overlay_position: 叠加位置
+        overlay_files: 要叠加的文件列表
+    """
+
     overlay_mode: Optional[
         Literal["SequentialOverlay", "InterleavedOverlay", "FixedRepeatOverlay"]
     ] = "SequentialOverlay"
@@ -32,6 +61,16 @@ class OverlayPdfOptions:
 
 @dataclass
 class CropBox:
+    """
+    裁剪框选项类。
+
+    Attributes:
+        x: X坐标
+        y: Y坐标
+        width: 宽度
+        height: 高度
+    """
+
     x: Optional[int] = 0
     y: Optional[int] = 0
     width: Optional[int] = 0
@@ -39,9 +78,24 @@ class CropBox:
 
 
 class GeneralApi(MixApi):
+    """
+    通用API类，提供PDF文件的基础操作功能。
+
+    该类继承自MixApi，提供PDF的分割、合并、旋转、裁剪等多种基础操作。
+
+    Attributes:
+        __client: 用于发送HTTP请求的客户端对象
+    """
+
     __client: Client
 
     def __init__(self, client: Client) -> None:
+        """
+        初始化GeneralApi对象。
+
+        Args:
+            client: 用于发送HTTP请求的客户端对象
+        """
         self.__client = client
 
     def split_pdf_by_sections(
@@ -51,6 +105,22 @@ class GeneralApi(MixApi):
         file_id: Optional[str] = None,
         options: SplitPdfBySectionsOptions = SplitPdfBySectionsOptions(),
     ) -> str:
+        """
+        按部分分割PDF文件。
+
+        Args:
+            out_path: 输出文件路径
+            file_input: PDF文件路径
+            file_id: 替代文件输入的文件ID
+            options: 分割选项
+
+        Returns:
+            str: 操作结果消息
+
+        Raises:
+            ValueError: 如果file_input和file_id都未提供
+            Exception: 如果服务器响应错误
+        """
         if file_input is None and file_id is None:
             raise ValueError("file_input and file_id must be provided one of")
         url = "/api/v1/general/split-pdf-by-sections"
@@ -84,6 +154,22 @@ class GeneralApi(MixApi):
         file_id: Optional[str] = None,
         options: SplitPdfByChaptersOptions = SplitPdfByChaptersOptions(),
     ) -> str:
+        """
+        按章节分割PDF文件。
+
+        Args:
+            out_path: 输出文件路径
+            file_input: PDF文件路径
+            file_id: 替代文件输入的文件ID
+            options: 分割选项
+
+        Returns:
+            str: 操作结果消息
+
+        Raises:
+            ValueError: 如果file_input和file_id都未提供
+            Exception: 如果服务器响应错误
+        """
         if file_input is None and file_id is None:
             raise ValueError("file_input and file_id must be provided one of")
         url = "/api/v1/general/split-pdf-by-chapters"
@@ -117,6 +203,22 @@ class GeneralApi(MixApi):
         file_id: Optional[str] = None,
         page_numbers: str = "all",
     ) -> str:
+        """
+        分割PDF文件的页面。
+
+        Args:
+            out_path: 输出文件路径
+            file_input: PDF文件路径
+            file_id: 替代文件输入的文件ID
+            page_numbers: 要分割的页码范围
+
+        Returns:
+            str: 操作结果消息
+
+        Raises:
+            ValueError: 如果file_input和file_id都未提供
+            Exception: 如果服务器响应错误
+        """
         if file_input is None and file_id is None:
             raise ValueError("file_input and file_id must be provided one of")
         url = "/api/v1/general/split-pages"
@@ -149,6 +251,23 @@ class GeneralApi(MixApi):
         split_type: Literal["size", "page", "document"] = "size",
         split_value: str = "10MB",
     ) -> str:
+        """
+        按大小或页数分割PDF文件。
+
+        Args:
+            out_path: 输出文件路径
+            file_input: PDF文件路径
+            file_id: 替代文件输入的文件ID
+            split_type: 分割类型（大小、页数、文档）
+            split_value: 分割值
+
+        Returns:
+            str: 操作结果消息
+
+        Raises:
+            ValueError: 如果file_input和file_id都未提供
+            Exception: 如果服务器响应错误
+        """
         if file_input is None and file_id is None:
             raise ValueError("file_input and file_id must be provided one of")
         url = "/api/v1/general/split-by-size-or-count"
@@ -186,6 +305,23 @@ class GeneralApi(MixApi):
         ] = "A4",
         scale_factor: float = 1.0,
     ) -> str:
+        """
+        缩放PDF页面大小。
+
+        Args:
+            out_path: 输出文件路径
+            file_input: PDF文件路径
+            file_id: 替代文件输入的文件ID
+            page_size: 页面大小
+            scale_factor: 缩放因子
+
+        Returns:
+            str: 操作结果消息
+
+        Raises:
+            ValueError: 如果file_input和file_id都未提供
+            Exception: 如果服务器响应错误
+        """
         if file_input is None and file_id is None:
             raise ValueError("file_input and file_id must be provided one of")
         url = "/api/v1/general/scale-page"
@@ -218,6 +354,22 @@ class GeneralApi(MixApi):
         file_id: Optional[str] = None,
         angle: Literal[0, 90, 180, 270] = 90,
     ) -> str:
+        """
+        旋转PDF页面。
+
+        Args:
+            out_path: 输出文件路径
+            file_input: PDF文件路径
+            file_id: 替代文件输入的文件ID
+            angle: 旋转角度
+
+        Returns:
+            str: 操作结果消息
+
+        Raises:
+            ValueError: 如果file_input和file_id都未提供
+            Exception: 如果服务器响应错误
+        """
         if file_input is None and file_id is None:
             raise ValueError("file_input and file_id must be provided one of")
         url = "/api/v1/general/rotate-page"
@@ -249,6 +401,22 @@ class GeneralApi(MixApi):
         file_id: Optional[str] = None,
         page_numbers: str = "all",
     ) -> str:
+        """
+        从PDF文件中删除页面。
+
+        Args:
+            out_path: 输出文件路径
+            file_input: PDF文件路径
+            file_id: 替代文件输入的文件ID
+            page_numbers: 要删除的页码范围
+
+        Returns:
+            str: 操作结果消息
+
+        Raises:
+            ValueError: 如果file_input和file_id都未提供
+            Exception: 如果服务器响应错误
+        """
         if file_input is None and file_id is None:
             raise ValueError("file_input and file_id must be provided one of")
         url = "/api/v1/general/remove-pages"
@@ -279,6 +447,21 @@ class GeneralApi(MixApi):
         file_input: Optional[Path] = None,
         file_id: Optional[str] = None,
     ) -> str:
+        """
+        从PDF文件中删除所有图像。
+
+        Args:
+            out_path: 输出文件路径
+            file_input: PDF文件路径
+            file_id: 替代文件输入的文件ID
+
+        Returns:
+            str: 操作结果消息
+
+        Raises:
+            ValueError: 如果file_input和file_id都未提供
+            Exception: 如果服务器响应错误
+        """
         if file_input is None and file_id is None:
             raise ValueError("file_input and file_id must be provided one of")
         url = "/api/v1/general/remove-image-pdf"
@@ -318,6 +501,23 @@ class GeneralApi(MixApi):
             "DUPLICATE",
         ] = "CUSTOM",
     ) -> str:
+        """
+        重新排列PDF页面顺序。
+
+        Args:
+            out_path: 输出文件路径
+            file_input: PDF文件路径
+            file_id: 替代文件输入的文件ID
+            page_numbers: 页码范围
+            custom_mode: 自定义模式
+
+        Returns:
+            str: 操作结果消息
+
+        Raises:
+            ValueError: 如果file_input和file_id都未提供
+            Exception: 如果服务器响应错误
+        """
         if file_input is None and file_id is None:
             raise ValueError("file_input and file_id must be provided one of")
         url = "/api/v1/general/rearrange-page"
@@ -349,6 +549,21 @@ class GeneralApi(MixApi):
         file_input: Optional[Path] = None,
         file_id: Optional[str] = None,
     ) -> str:
+        """
+        将PDF转换为单页文件。
+
+        Args:
+            out_path: 输出文件路径
+            file_input: PDF文件路径
+            file_id: 替代文件输入的文件ID
+
+        Returns:
+            str: 操作结果消息
+
+        Raises:
+            ValueError: 如果file_input和file_id都未提供
+            Exception: 如果服务器响应错误
+        """
         if file_input is None and file_id is None:
             raise ValueError("file_input and file_id must be provided one of")
         url = "/api/v1/general/pdf-to-single-page"
@@ -375,6 +590,22 @@ class GeneralApi(MixApi):
         file_input: Optional[Path] = None,
         file_id: Optional[str] = None,
     ) -> str:
+        """
+        在PDF文件上叠加其他PDF文件。
+
+        Args:
+            out_path: 输出文件路径
+            options: 叠加选项
+            file_input: PDF文件路径
+            file_id: 替代文件输入的文件ID
+
+        Returns:
+            str: 操作结果消息
+
+        Raises:
+            ValueError: 如果file_input和file_id都未提供
+            Exception: 如果服务器响应错误
+        """
         if file_input is None and file_id is None:
             raise ValueError("file_input and file_id must be provided one of")
         url = "/api/v1/general/overlay-pdfs"
@@ -417,6 +648,22 @@ class GeneralApi(MixApi):
         remove_cert_sign: bool = True,
         generate_toc: Optional[bool] = None,
     ) -> str:
+        """
+        合并多个PDF文件。
+
+        Args:
+            out_path: 输出文件路径
+            file_inputs: 要合并的PDF文件列表
+            sort_type: 排序类型
+            remove_cert_sign: 是否移除证书签名
+            generate_toc: 是否生成目录
+
+        Returns:
+            str: 操作结果消息
+
+        Raises:
+            Exception: 如果服务器响应错误
+        """
         url = "/api/v1/general/merge-pdfs"
         data = {}
         files = {}
@@ -437,6 +684,19 @@ class GeneralApi(MixApi):
         return resp.text
 
     def extract_bookmarks(self, out_path: Path, file: Path) -> str:
+        """
+        从PDF文件中提取书签。
+
+        Args:
+            out_path: 输出文件路径
+            file: PDF文件路径
+
+        Returns:
+            str: 操作结果消息
+
+        Raises:
+            Exception: 如果服务器响应错误
+        """
         url = "/api/v1/general/extract-bookmarks"
         file = None
         files = {}
@@ -455,6 +715,22 @@ class GeneralApi(MixApi):
         file_id: Optional[str] = None,
         options: CropBox = CropBox(),
     ) -> str:
+        """
+        裁剪PDF页面。
+
+        Args:
+            out_path: 输出文件路径
+            file_input: PDF文件路径
+            file_id: 替代文件输入的文件ID
+            options: 裁剪框选项
+
+        Returns:
+            str: 操作结果消息
+
+        Raises:
+            ValueError: 如果file_input和file_id都未提供
+            Exception: 如果服务器响应错误
+        """
         if file_input is None and file_id is None:
             raise ValueError("file_input and file_id must be provided one of")
         url = "/api/v1/general/crop"

@@ -1,7 +1,16 @@
 from httpx import Client
 
 
+from httpx import Client
+
+
 class MixApi:
+    """
+    API基础类，提供所有API类共用的功能。
+
+    该类是所有具体API实现类的基类，提供客户端对象获取等通用功能。
+    """
+
     def get_client(self) -> Client:
         """
         获取客户端对象，处理Python名称修饰问题。

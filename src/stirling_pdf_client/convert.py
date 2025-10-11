@@ -6,12 +6,40 @@ from .mix import MixApi
 
 
 class ConvertApi(MixApi):
+    """
+    转换相关API类，提供PDF文件和其他格式之间的转换功能。
+
+    该类继承自MixApi，提供PDF与Word、PowerPoint、图片、HTML、Markdown等格式的相互转换功能。
+
+    Attributes:
+        __client: 用于发送HTTP请求的客户端对象
+    """
+
     __client: Client
 
     def __init__(self, client: Client) -> None:
+        """
+        初始化ConvertApi对象。
+
+        Args:
+            client: 用于发送HTTP请求的客户端对象
+        """
         self.__client = client
 
     def url_to_pdf(self, urlInput: str, out_path: Path) -> str:
+        """
+        将URL转换为PDF文件。
+
+        Args:
+            urlInput: 要转换的URL
+            out_path: 输出PDF文件路径
+
+        Returns:
+            str: 操作结果消息
+
+        Raises:
+            Exception: 如果服务器响应错误
+        """
         url = "/api/v1/convert/url/pdf"
         resp: Response = self.__client.request(
             method="POST", url=url, data={"urlInput": urlInput}
@@ -20,6 +48,19 @@ class ConvertApi(MixApi):
         return resp.text
 
     def pdf_to_xml(self, file_input: Path, file_id: str) -> Any:
+        """
+        将PDF文件转换为XML格式。
+
+        Args:
+            file_input: PDF文件路径
+            file_id: 文件ID
+
+        Returns:
+            Any: XML格式的转换结果
+
+        Raises:
+            Exception: 如果服务器响应错误
+        """
         url = "/api/v1/convert/pdf/xml"
         # 使用二进制模式打开文件，并使用上下文管理器自动关闭
         with open(file_input, "rb") as file:
@@ -38,6 +79,22 @@ class ConvertApi(MixApi):
         file_id: Optional[str] = None,
         output_format: Optional[str] = "doc",
     ) -> str:
+        """
+        将PDF文件转换为Word文档。
+
+        Args:
+            out_path: 输出文件路径
+            file_input: PDF文件路径
+            file_id: 替代文件输入的文件ID
+            output_format: 输出格式（'doc'或'docx'）
+
+        Returns:
+            str: HTTP状态码
+
+        Raises:
+            ValueError: 如果file_input和file_id都未提供，或output_format不是'doc'或'docx'
+            Exception: 如果服务器响应错误
+        """
         # 确保output_format只能是'doc'或'docx'
 
         if output_format not in ["doc", "docx"]:
@@ -116,6 +173,22 @@ class ConvertApi(MixApi):
         file_id: Optional[str] = None,
         output_format: Optional[str] = "rtf",
     ) -> str:
+        """
+        将PDF文件转换为文本文件。
+
+        Args:
+            out_path: 输出文件路径
+            file_input: PDF文件路径
+            file_id: 替代文件输入的文件ID
+            output_format: 输出格式
+
+        Returns:
+            str: HTTP状态码
+
+        Raises:
+            ValueError: 如果file_input和file_id都未提供
+            Exception: 如果服务器响应错误
+        """
         url = "/api/v1/convert/pdf/text"
         # 使用二进制模式打开文件，并使用上下文管理器自动关闭
         if file_input is None and file_id is None:
@@ -140,6 +213,22 @@ class ConvertApi(MixApi):
         file_id: Optional[str] = None,
         output_format: Optional[str] = "ppt",
     ) -> str:
+        """
+        将PDF文件转换为演示文稿。
+
+        Args:
+            out_path: 输出文件路径
+            file_input: PDF文件路径
+            file_id: 替代文件输入的文件ID
+            output_format: 输出格式（'ppt'或'pptx'）
+
+        Returns:
+            str: HTTP状态码
+
+        Raises:
+            ValueError: 如果file_input和file_id都未提供，或output_format不是'ppt'或'pptx'
+            Exception: 如果服务器响应错误
+        """
         url = "/api/v1/convert/pdf/presentation"
         if output_format not in ["ppt", "pptx"]:
             raise ValueError("output_format must be either 'ppt' or 'pptx'")
@@ -166,6 +255,22 @@ class ConvertApi(MixApi):
         file_id: Optional[str] = None,
         output_format: Optional[str] = "pdfa",
     ) -> str:
+        """
+        将PDF文件转换为PDF/A格式（长期保存格式）。
+
+        Args:
+            out_path: 输出文件路径
+            file_input: PDF文件路径
+            file_id: 替代文件输入的文件ID
+            output_format: 输出格式（'pdfa'或'pdfa-1'）
+
+        Returns:
+            str: HTTP状态码
+
+        Raises:
+            ValueError: 如果file_input和file_id都未提供，或output_format不是'pdfa'或'pdfa-1'
+            Exception: 如果服务器响应错误
+        """
         url = "/api/v1/convert/pdf/pdfa"
         if output_format not in ["pdfa", "pdfa-1"]:
             raise ValueError("output_format must be either 'pdfa' or 'pdfa-1'")
@@ -188,6 +293,21 @@ class ConvertApi(MixApi):
     def pdf_to_markdown(
         self, out_path: Path, file_input: Optional[Path], file_id: Optional[str] = None
     ) -> str:
+        """
+        将PDF文件转换为Markdown格式。
+
+        Args:
+            out_path: 输出文件路径
+            file_input: PDF文件路径
+            file_id: 替代文件输入的文件ID
+
+        Returns:
+            str: HTTP状态码
+
+        Raises:
+            ValueError: 如果file_input和file_id都未提供
+            Exception: 如果服务器响应错误
+        """
         url = "/api/v1/convert/pdf/markdown"
         # 使用二进制模式打开文件，并使用上下文管理器自动关闭
         if file_input is None and file_id is None:
@@ -217,6 +337,27 @@ class ConvertApi(MixApi):
         dpi: int = 300,
         include_annotations: Optional[bool] = False,
     ) -> str:
+        """
+        将PDF文件转换为图像文件。
+
+        Args:
+            out_path: 输出文件路径
+            file_input: PDF文件路径
+            file_id: 替代文件输入的文件ID
+            page_numbers: 要转换的页码范围
+            image_format: 输出图像格式
+            single_or_multiple: 单个或多个图像文件
+            color_type: 颜色类型
+            dpi: 图像分辨率
+            include_annotations: 是否包含注释
+
+        Returns:
+            str: HTTP状态码
+
+        Raises:
+            ValueError: 如果file_input和file_id都未提供
+            Exception: 如果服务器响应错误
+        """
         url = "/api/v1/convert/pdf/img"
         # 使用二进制模式打开文件，并使用上下文管理器自动关闭
         if file_input is None and file_id is None:
@@ -245,6 +386,21 @@ class ConvertApi(MixApi):
     def pdf_to_html(
         self, out_path: Path, file_input: Optional[Path], file_id: Optional[str] = None
     ) -> str:
+        """
+        将PDF文件转换为HTML格式。
+
+        Args:
+            out_path: 输出文件路径
+            file_input: PDF文件路径
+            file_id: 替代文件输入的文件ID
+
+        Returns:
+            str: HTTP状态码
+
+        Raises:
+            ValueError: 如果file_input和file_id都未提供
+            Exception: 如果服务器响应错误
+        """
         url = "/api/v1/convert/pdf/html"
         # 使用二进制模式打开文件，并使用上下文管理器自动关闭
         if file_input is None and file_id is None:
@@ -269,7 +425,23 @@ class ConvertApi(MixApi):
         file_id: Optional[str] = None,
         page_numbers: str = "all",
     ) -> str:
-        url = "/api/v1/convert/pdf/html"
+        """
+        将PDF文件转换为CSV格式。
+
+        Args:
+            out_path: 输出文件路径
+            file_input: PDF文件路径
+            file_id: 替代文件输入的文件ID
+            page_numbers: 要转换的页码范围
+
+        Returns:
+            str: HTTP状态码
+
+        Raises:
+            ValueError: 如果file_input和file_id都未提供
+            Exception: 如果服务器响应错误
+        """
+        url = "/api/v1/convert/pdf/csv"
         # 使用二进制模式打开文件，并使用上下文管理器自动关闭
         if file_input is None and file_id is None:
             raise ValueError("file_input and file_id must be provided one of")
@@ -287,7 +459,20 @@ class ConvertApi(MixApi):
         return resp.status_code
 
     def markdown_to_pdf(self, out_path: Path, file_input: Path) -> str:
-        url = "/api/v1/convert/pdf/html"
+        """
+        将Markdown文件转换为PDF格式。
+
+        Args:
+            out_path: 输出文件路径
+            file_input: Markdown文件路径
+
+        Returns:
+            str: HTTP状态码
+
+        Raises:
+            Exception: 如果服务器响应错误
+        """
+        url = "/api/v1/convert/markdown/pdf"
 
         file = open(file_input, "rb")
         files = {"fileInput": file}
@@ -307,6 +492,22 @@ class ConvertApi(MixApi):
         color_type: Literal["color", "greyscale", "blackwhite"] = "color",
         auto_rotate: Optional[bool] = False,
     ) -> str:
+        """
+        将图像文件转换为PDF格式。
+
+        Args:
+            out_path: 输出文件路径
+            file_input: 图像文件路径列表
+            fit_option: 适配选项
+            color_type: 颜色类型
+            auto_rotate: 是否自动旋转
+
+        Returns:
+            str: HTTP状态码
+
+        Raises:
+            Exception: 如果服务器响应错误
+        """
         url = "/api/v1/convert/img/pdf"
 
         # 为每个文件创建一个文件对象
@@ -341,7 +542,23 @@ class ConvertApi(MixApi):
         file_id: Optional[str] = None,
         zoom: Optional[float] = 1.0,
     ) -> str:
-        url = "/api/v1/convert/pdf/html"
+        """
+        将HTML文件转换为PDF格式。
+
+        Args:
+            out_path: 输出文件路径
+            file_input: HTML文件路径
+            file_id: 替代文件输入的文件ID
+            zoom: 缩放比例
+
+        Returns:
+            str: HTTP状态码
+
+        Raises:
+            ValueError: 如果file_input和file_id都未提供
+            Exception: 如果服务器响应错误
+        """
+        url = "/api/v1/convert/html/pdf"
         if file_input is None and file_id is None:
             raise ValueError("file_input and file_id must be provided one of")
 
@@ -357,7 +574,20 @@ class ConvertApi(MixApi):
         return resp.status_code
 
     def file_to_pdf(self, out_path: Path, file_input: Path) -> str:
-        url = "/api/v1/convert/pdf/html"
+        """
+        将各种文件格式转换为PDF。
+
+        Args:
+            out_path: 输出文件路径
+            file_input: 输入文件路径
+
+        Returns:
+            str: HTTP状态码
+
+        Raises:
+            Exception: 如果服务器响应错误
+        """
+        url = "/api/v1/convert/file/pdf"
         file = open(file_input, "rb")
         files = {"fileInput": file}
 
@@ -377,6 +607,25 @@ class ConvertApi(MixApi):
         download_html: Optional[bool] = False,
         include_all_recipients: Optional[bool] = True,
     ) -> str:
+        """
+        将EML邮件文件转换为PDF格式。
+
+        Args:
+            out_path: 输出文件路径
+            file_input: EML文件路径
+            file_id: 替代文件输入的文件ID
+            include_attachments: 是否包含附件
+            max_attachment_size_mb: 最大附件大小（MB）
+            download_html: 是否下载HTML内容
+            include_all_recipients: 是否包含所有收件人
+
+        Returns:
+            str: HTTP状态码
+
+        Raises:
+            ValueError: 如果file_input和file_id都未提供
+            Exception: 如果服务器响应错误
+        """
         url = "/api/v1/convert/pdf/html"
         if file_input is None and file_id is None:
             raise ValueError("file_input and file_id must be provided one of")

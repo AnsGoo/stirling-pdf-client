@@ -60,54 +60,53 @@ class ConvertApi(MixApi):
         if file:
             file.close()
         return resp.status_code
-    
 
     def advanced_pdf_conversion(
         self,
         out_path: Path,
         file_input: Optional[Path] = None,
         file_id: Optional[str] = None,
-        advanced_options: Optional[dict] = None
+        advanced_options: Optional[dict] = None,
     ) -> str:
         """
         高级PDF转换功能（仅在服务器版本 >= 2.0.0 时可用）。
-        
+
         此方法展示了如何使用版本检查装饰器来限制功能可用性。
         在实际应用中，这可能是一个需要较新版本服务器支持的高级功能。
-        
+
         Args:
             out_path: 输出文件路径
             file_input: 输入PDF文件路径
             file_id: 替代文件输入的文件ID
             advanced_options: 高级转换选项
-            
+
         Returns:
             操作结果消息
         """
         if file_input is None and file_id is None:
             raise ValueError("file_input and file_id must be provided one of")
-            
+
         url = "/api/v1/convert/pdf/advanced"
         file = None
         if file_input:
             file = open(file_input, "rb")
-            
+
         files = {"fileInput": file}
         data = {"fileId": file_id}
-        
+
         # 添加高级选项
         if advanced_options:
             data.update(advanced_options)
-            
+
         resp: Response = self.__client.request(
             method="POST", url=url, data=data, files=files
         )
-        
+
         save_file(resp=resp, out_path=out_path)
-        
+
         if file:
             file.close()
-            
+
         return resp.text
 
     def pdf_to_text(

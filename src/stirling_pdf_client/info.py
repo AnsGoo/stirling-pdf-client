@@ -5,8 +5,6 @@ from .mix import MixApi
 from .utils import requires_server_version
 
 
-
-
 class InfoApi(MixApi):
     __client: Client
 
@@ -18,7 +16,6 @@ class InfoApi(MixApi):
         resp: Response = self.__client.request(method="GET", url=url)
 
         return resp.text
-
 
     def get_status(self) -> Status:
         url = "/api/v1/info/status"

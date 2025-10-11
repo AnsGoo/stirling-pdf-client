@@ -54,7 +54,9 @@ class ConvertPdfToImageOption:
 class RedactOption:
     page_numbers: str = "all"
     redactions: bool = False
-    convert_pdf_to_image: ConvertPdfToImageOption = field(default_factory=ConvertPdfToImageOption)
+    convert_pdf_to_image: ConvertPdfToImageOption = field(
+        default_factory=ConvertPdfToImageOption
+    )
     pageRedactionColor: str = "#000000"
 
 

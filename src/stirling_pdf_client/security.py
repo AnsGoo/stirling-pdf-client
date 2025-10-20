@@ -279,7 +279,7 @@ class SecurityApi(MixApi):
         file_input: Optional[Path],
         options: SanitizePdfOption,
         file_id: Optional[str] = None,
-    ) -> str:
+    ) -> Path:
         """
         清理PDF文件中的敏感内容。
 
@@ -290,7 +290,7 @@ class SecurityApi(MixApi):
             file_id: 替代文件输入的文件ID
 
         Returns:
-            str: 操作结果消息
+            Path: 输出文件路径
 
         Raises:
             ValueError: 如果file_input和file_id都未提供
@@ -320,8 +320,7 @@ class SecurityApi(MixApi):
         )
         if file:
             file.close()
-        save_file(resp, out_path)
-        return resp.text
+        return save_file(resp, out_path)
 
     def remove_password(
         self,
@@ -329,7 +328,7 @@ class SecurityApi(MixApi):
         password: str,
         file_input: Optional[Path],
         file_id: Optional[str] = None,
-    ) -> str:
+    ) -> Path:
         """
         移除PDF文件的密码保护。
 
@@ -340,7 +339,7 @@ class SecurityApi(MixApi):
             file_id: 替代文件输入的文件ID
 
         Returns:
-            str: 操作结果消息
+            Path: 输出文件路径
 
         Raises:
             ValueError: 如果file_input和file_id都未提供
@@ -358,15 +357,14 @@ class SecurityApi(MixApi):
         )
         if file:
             file.close()
-        save_file(resp, out_path)
-        return resp.text
+        return save_file(resp, out_path)
 
     def remove_cert_sign(
         self,
         out_path: Path,
         file_input: Optional[Path],
         file_id: Optional[str] = None,
-    ) -> str:
+    ) -> Path:
         """
         移除PDF文件的证书签名。
 
@@ -376,7 +374,7 @@ class SecurityApi(MixApi):
             file_id: 替代文件输入的文件ID
 
         Returns:
-            str: 操作结果消息
+            Path: 输出文件路径
 
         Raises:
             ValueError: 如果file_input和file_id都未提供
@@ -396,8 +394,7 @@ class SecurityApi(MixApi):
         )
         if file:
             file.close()
-        save_file(resp, out_path)
-        return resp.text
+        return save_file(resp, out_path)
 
     def redact(
         self,
@@ -405,7 +402,7 @@ class SecurityApi(MixApi):
         options: RedactOption,
         file_input: Optional[Path],
         file_id: Optional[str] = None,
-    ) -> str:
+    ) -> Path:
         """
         编辑PDF文件中的内容。
 
@@ -416,7 +413,7 @@ class SecurityApi(MixApi):
             file_id: 替代文件输入的文件ID
 
         Returns:
-            str: 操作结果消息
+            Path: 输出文件路径
 
         Raises:
             ValueError: 如果file_input和file_id都未提供
@@ -451,12 +448,11 @@ class SecurityApi(MixApi):
         )
         if file:
             file.close()
-        save_file(resp, out_path)
-        return resp.text
+        return save_file(resp, out_path)
 
     def get_info_on_pdf(
         self, file_input: Optional[Path], file_id: Optional[str] = None
-    ) -> str:
+    ) -> dict:
         """
         获取PDF文件的安全信息。
 
@@ -496,7 +492,7 @@ class SecurityApi(MixApi):
         file_input: Optional[Path],
         key_length: int = 256,
         file_id: Optional[str] = None,
-    ) -> str:
+    ) -> Path:
         """
         为PDF文件添加密码保护。
 
@@ -545,8 +541,7 @@ class SecurityApi(MixApi):
         )
         if file:
             file.close()
-        save_file(resp, out_path)
-        return resp.text
+        return save_file(resp, out_path)
 
     def add_watermark(
         self,
@@ -554,7 +549,7 @@ class SecurityApi(MixApi):
         options: AddWatermarkOption,
         file_input: Optional[Path],
         file_id: Optional[str] = None,
-    ) -> str:
+    ) -> Path:
         """
         为PDF文件添加水印。
 
@@ -565,7 +560,7 @@ class SecurityApi(MixApi):
             file_id: 替代文件输入的文件ID
 
         Returns:
-            str: 操作结果消息
+            Path: 输出文件路径
 
         Raises:
             ValueError: 如果file_input和file_id都未提供
@@ -598,8 +593,7 @@ class SecurityApi(MixApi):
         )
         if file:
             file.close()
-        save_file(resp, out_path)
-        return resp.text
+        return save_file(resp, out_path)
 
     def cert_sign(
         self,
@@ -607,7 +601,7 @@ class SecurityApi(MixApi):
         file_input: Optional[Path],
         file_id: Optional[str] = None,
         options: CertSignOption = CertSignOption(),
-    ) -> str:
+    ) -> Path:
         """
         为PDF文件添加证书签名。
 
@@ -618,7 +612,7 @@ class SecurityApi(MixApi):
             options: 证书签名选项
 
         Returns:
-            str: 操作结果消息
+            Path: 输出文件路径
 
         Raises:
             ValueError: 如果file_input和file_id都未提供
@@ -652,5 +646,4 @@ class SecurityApi(MixApi):
         )
         if file:
             file.close()
-        save_file(resp, out_path)
-        return resp.text
+        return save_file(resp, out_path)

@@ -202,7 +202,7 @@ class MiscApi(MixApi):
         file_id: Optional[str] = None,
         delete_all: Optional[bool] = False,
         options: Optional[UpdateMetadataOptions] = None,
-    ) -> str:
+    ) -> Path:
         """
         更新PDF文件的元数据。
 
@@ -214,7 +214,7 @@ class MiscApi(MixApi):
             options: 元数据更新选项
 
         Returns:
-            str: 操作结果消息
+            Path: 输出文件路径
 
         Raises:
             ValueError: 如果file_input和file_id都未提供
@@ -250,14 +250,14 @@ class MiscApi(MixApi):
         resp: Response = self.__client.request(
             method="POST", url=url, data=data, files=files
         )
-        save_file(resp=resp, out_path=out_path)
+        
         if file:
             file.close()
-        return resp.text
+        return save_file(resp=resp, out_path=out_path)
 
     def unlock_pdf_forms(
         self, out_path: Path, file_input: Optional[Path], file_id: Optional[str] = None
-    ) -> str:
+    ) -> Path:
         """
         解锁PDF表单，使表单可以编辑。
 
@@ -285,10 +285,9 @@ class MiscApi(MixApi):
         resp: Response = self.__client.request(
             method="POST", url=url, data=data, files=files
         )
-        save_file(resp=resp, out_path=out_path)
         if file:
             file.close()
-        return resp.text
+        return save_file(resp=resp, out_path=out_path)
 
     def scanner_effect(
         self,
@@ -310,7 +309,7 @@ class MiscApi(MixApi):
             "quality_value": 0,
             "rotation_value": 0,
         },
-    ) -> str:
+    ) -> Path:
         """
         为PDF文件添加扫描效果。
 
@@ -322,7 +321,7 @@ class MiscApi(MixApi):
             options: 扫描效果选项
 
         Returns:
-            str: 操作结果消息
+            Path: 输出文件路径
 
         Raises:
             Exception: 如果服务器响应错误
@@ -354,10 +353,9 @@ class MiscApi(MixApi):
         resp: Response = self.__client.request(
             method="POST", url=url, data=data, files=files
         )
-        save_file(resp=resp, out_path=out_path)
         if file:
             file.close()
-        return resp.text
+        return save_file(resp=resp, out_path=out_path)
 
     def replace_invert_pdf(
         self,
@@ -371,7 +369,7 @@ class MiscApi(MixApi):
             "WHITE_TEXT_ON_BLACK", "BLACK_TEXT_ON_WHITE", "GREEN_TEXT_ON_BLACK"
         ] = "WHITE_TEXT_ON_BLACK",
         options: Optional[ReplaceInvertPdfOptions] = None,
-    ) -> str:
+    ) -> Path:
         """
         替换和反转PDF的颜色。
 
@@ -384,7 +382,7 @@ class MiscApi(MixApi):
             options: 自定义颜色选项
 
         Returns:
-            str: 操作结果消息
+            Path: 输出文件路径
 
         Raises:
             ValueError: 如果file_input和file_id都未提供
@@ -411,14 +409,13 @@ class MiscApi(MixApi):
         resp: Response = self.__client.request(
             method="POST", url=url, data=data, files=files
         )
-        save_file(resp=resp, out_path=out_path)
         if file:
             file.close()
-        return resp.text
+        return save_file(resp=resp, out_path=out_path)
 
     def repair(
         self, out_path: Path, file_input: Optional[Path], file_id: Optional[str] = None
-    ) -> str:
+    ) -> Path:
         """
         修复损坏的PDF文件。
 
@@ -428,7 +425,7 @@ class MiscApi(MixApi):
             file_id: 替代文件输入的文件ID
 
         Returns:
-            str: 操作结果消息
+            Path: 输出文件路径
 
         Raises:
             ValueError: 如果file_input和file_id都未提供
@@ -445,10 +442,9 @@ class MiscApi(MixApi):
         resp: Response = self.__client.request(
             method="POST", url=url, data=data, files=files
         )
-        save_file(resp=resp, out_path=out_path)
         if file:
             file.close()
-        return resp.text
+        return save_file(resp=resp, out_path=out_path)
 
     def remove_blanks(
         self,
@@ -457,7 +453,7 @@ class MiscApi(MixApi):
         file_id: Optional[str] = None,
         threshold: Optional[int] = 10,
         white_percent: Optional[float] = 99.9,
-    ) -> str:
+    ) -> Path:
         """
         移除PDF文件中的空白页。
 
@@ -469,7 +465,7 @@ class MiscApi(MixApi):
             white_percent: 空白百分比
 
         Returns:
-            str: 操作结果消息
+            Path: 输出文件路径
 
         Raises:
             ValueError: 如果file_input和file_id都未提供
@@ -490,10 +486,9 @@ class MiscApi(MixApi):
         resp: Response = self.__client.request(
             method="POST", url=url, data=data, files=files
         )
-        save_file(resp=resp, out_path=out_path)
         if file:
             file.close()
-        return resp.text
+        return save_file(resp=resp, out_path=out_path)
 
     def orc_pdf(
         self,
@@ -510,7 +505,7 @@ class MiscApi(MixApi):
             "clean_final": True,
             "remove_images_after": True,
         },
-    ) -> str:
+    ) -> Path:
         """
         对PDF文件执行OCR（光学字符识别）。
 
@@ -524,7 +519,7 @@ class MiscApi(MixApi):
             options: OCR选项
 
         Returns:
-            str: 操作结果消息
+            Path: 输出文件路径
 
         Raises:
             ValueError: 如果file_input和file_id都未提供
@@ -556,10 +551,9 @@ class MiscApi(MixApi):
         resp: Response = self.__client.request(
             method="POST", url=url, data=data, files=files
         )
-        save_file(resp=resp, out_path=out_path)
         if file:
             file.close()
-        return resp.text
+        return save_file(resp=resp, out_path=out_path)
 
     def flatten(
         self,
@@ -567,7 +561,7 @@ class MiscApi(MixApi):
         file_input: Optional[Path],
         file_id: Optional[str] = None,
         flatten_only_forms: Optional[bool] = False,
-    ) -> str:
+    ) -> Path:
         """
         扁平化PDF文件中的表单和注释。
 
@@ -578,7 +572,7 @@ class MiscApi(MixApi):
             flatten_only_forms: 是否只扁平化表单
 
         Returns:
-            str: 操作结果消息
+            Path: 输出文件路径
 
         Raises:
             ValueError: 如果file_input和file_id都未提供
@@ -595,10 +589,9 @@ class MiscApi(MixApi):
         resp: Response = self.__client.request(
             method="POST", url=url, data=data, files=files
         )
-        save_file(resp=resp, out_path=out_path)
         if file:
             file.close()
-        return resp.text
+        return save_file(resp=resp, out_path=out_path)
 
     def extract_images(
         self,
@@ -607,7 +600,7 @@ class MiscApi(MixApi):
         file_id: Optional[str] = None,
         format: Literal["png", "jpg", "jpeg", "gif"] = "png",
         allow_duplicates: Optional[bool] = False,
-    ) -> str:
+    ) -> Path:
         """
         从PDF文件中提取图像。
 
@@ -619,7 +612,7 @@ class MiscApi(MixApi):
             allow_duplicates: 是否允许重复图像
 
         Returns:
-            str: 操作结果消息
+            Path: 输出文件路径      
 
         Raises:
             ValueError: 如果file_input和file_id都未提供
@@ -640,10 +633,9 @@ class MiscApi(MixApi):
         resp: Response = self.__client.request(
             method="POST", url=url, data=data, files=files
         )
-        save_file(resp=resp, out_path=out_path)
         if file:
             file.close()
-        return resp.text
+        return save_file(resp=resp, out_path=out_path)
 
     def extract_image_scans(
         self,
@@ -654,7 +646,7 @@ class MiscApi(MixApi):
         min_area: Optional[int] = 8000,
         min_contour_area: Optional[int] = 500,
         border_size: Optional[int] = 1,
-    ) -> str:
+    ) -> Path:  
         """
         从PDF文件中提取扫描图像。
 
@@ -668,7 +660,7 @@ class MiscApi(MixApi):
             border_size: 边框大小
 
         Returns:
-            str: 操作结果消息
+            Path: 输出文件路径  
 
         Raises:
             Exception: 如果服务器响应错误
@@ -688,14 +680,13 @@ class MiscApi(MixApi):
         resp: Response = self.__client.request(
             method="POST", url=url, data=data, files=files
         )
-        save_file(resp=resp, out_path=out_path)
         if file:
             file.close()
-        return resp.text
+        return save_file(resp=resp, out_path=out_path)
 
     def decompress_pdf(
         self, out_path: Path, file_input: Optional[Path], file_id: Optional[str] = None
-    ) -> str:
+    ) -> Path:
         """
         解压缩PDF文件。
 
@@ -705,7 +696,7 @@ class MiscApi(MixApi):
             file_id: 替代文件输入的文件ID
 
         Returns:
-            str: 操作结果消息
+            Path: 输出文件路径
 
         Raises:
             ValueError: 如果file_input和file_id都未提供
@@ -722,10 +713,9 @@ class MiscApi(MixApi):
         resp: Response = self.__client.request(
             method="POST", url=url, data=data, files=files
         )
-        save_file(resp=resp, out_path=out_path)
         if file:
             file.close()
-        return resp.text
+        return save_file(resp=resp, out_path=out_path)
 
     def compress_pdf(
         self,
@@ -737,7 +727,7 @@ class MiscApi(MixApi):
         linearize: Optional[bool] = False,
         normalize: Optional[bool] = False,
         grayscale: Optional[bool] = False,
-    ) -> str:
+    ) -> Path:
         """
         压缩PDF文件大小。
 
@@ -776,17 +766,16 @@ class MiscApi(MixApi):
         resp: Response = self.__client.request(
             method="POST", url=url, data=data, files=files
         )
-        save_file(resp=resp, out_path=out_path)
         if file:
             file.close()
-        return resp.text
+        return save_file(resp=resp, out_path=out_path)
 
     def auto_split_pdf(
         self,
         out_path: Path,
         file_input: Optional[Path],
         file_id: Optional[str] = None,
-    ) -> str:
+    ) -> Path:
         """
         自动分割PDF文件。
 
@@ -796,7 +785,7 @@ class MiscApi(MixApi):
             file_id: 替代文件输入的文件ID
 
         Returns:
-            str: 操作结果消息
+            Path: 输出文件路径
 
         Raises:
             ValueError: 如果file_input和file_id都未提供
@@ -813,10 +802,9 @@ class MiscApi(MixApi):
         resp: Response = self.__client.request(
             method="POST", url=url, data=data, files=files
         )
-        save_file(resp=resp, out_path=out_path)
         if file:
             file.close()
-        return resp.text
+        return save_file(resp=resp, out_path=out_path)
 
     def auto_rename(
         self,
@@ -824,7 +812,7 @@ class MiscApi(MixApi):
         file_input: Optional[Path],
         file_id: Optional[str] = None,
         use_first_text_as_fallback: Optional[bool] = False,
-    ) -> str:
+    ) -> Path:
         """
         自动重命名PDF文件。
 
@@ -835,7 +823,7 @@ class MiscApi(MixApi):
             use_first_text_as_fallback: 是否使用首行文本作为备选
 
         Returns:
-            str: 操作结果消息
+            Path: 输出文件路径
 
         Raises:
             ValueError: 如果file_input和file_id都未提供
@@ -852,10 +840,9 @@ class MiscApi(MixApi):
         resp: Response = self.__client.request(
             method="POST", url=url, data=data, files=files
         )
-        save_file(resp=resp, out_path=out_path)
         if file:
             file.close()
-        return resp.text
+        return save_file(resp=resp, out_path=out_path)
 
     def add_stamp(
         self,
@@ -863,7 +850,7 @@ class MiscApi(MixApi):
         file_input: Optional[Path],
         file_id: Optional[str] = None,
         options: Optional[StampOptions] = StampOptions(),
-    ) -> str:
+    ) -> Path:
         """
         为PDF文件添加图章。
 
@@ -874,7 +861,7 @@ class MiscApi(MixApi):
             options: 图章选项
 
         Returns:
-            str: 操作结果消息
+            Path: 输出文件路径
 
         Raises:
             ValueError: 如果file_input和file_id都未提供
@@ -922,10 +909,9 @@ class MiscApi(MixApi):
         resp: Response = self.__client.request(
             method="POST", url=url, data=data, files=files
         )
-        save_file(resp=resp, out_path=out_path)
         if file:
             file.close()
-        return resp.text
+        return save_file(resp=resp, out_path=out_path)
 
     def add_image(
         self,
@@ -933,7 +919,7 @@ class MiscApi(MixApi):
         file_input: Optional[Path],
         options: Optional[ImageOptions],
         file_id: Optional[str] = None,
-    ) -> str:
+    ) -> Path:
         """
         在PDF文件中添加图像。
 
@@ -944,7 +930,7 @@ class MiscApi(MixApi):
             file_id: 替代文件输入的文件ID
 
         Returns:
-            str: 操作结果消息
+            Path: 输出文件路径
 
         Raises:
             ValueError: 如果file_input和file_id都未提供
@@ -973,10 +959,9 @@ class MiscApi(MixApi):
         resp: Response = self.__client.request(
             method="POST", url=url, data=data, files=files
         )
-        save_file(resp=resp, out_path=out_path)
         if file:
             file.close()
-        return resp.text
+        return save_file(resp=resp, out_path=out_path)
 
     def add_attachments(
         self,
@@ -984,7 +969,7 @@ class MiscApi(MixApi):
         file_input: Optional[Path],
         attachments: List[Path],
         file_id: Optional[str] = None,
-    ) -> str:
+    ) -> Path:
         """
         向PDF文件添加附件。
 
@@ -995,7 +980,7 @@ class MiscApi(MixApi):
             file_id: 替代文件输入的文件ID
 
         Returns:
-            str: 操作结果消息
+            Path: 输出文件路径
 
         Raises:
             ValueError: 如果file_input和file_id都未提供
@@ -1017,7 +1002,6 @@ class MiscApi(MixApi):
         )
         for attachment_file in attachments_files:
             attachment_file.close()
-        save_file(resp=resp, out_path=out_path)
         if file:
             file.close()
-        return resp.text
+        return save_file(resp=resp, out_path=out_path)

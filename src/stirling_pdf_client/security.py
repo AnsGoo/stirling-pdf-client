@@ -485,7 +485,7 @@ class SecurityApi(MixApi):
         )
         if file:
             file.close()
-        return resp.text
+        return resp.json()
 
     def add_password(
         self,

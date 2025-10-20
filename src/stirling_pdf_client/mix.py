@@ -1,8 +1,6 @@
 from httpx import Client
 
 
-
-
 class MixApi:
     """
     API基础类，提供所有API类共用的功能。

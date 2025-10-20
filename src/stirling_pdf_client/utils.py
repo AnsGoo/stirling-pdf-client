@@ -25,6 +25,8 @@ def save_file(resp: Response, out_path: Path):
     with open(target_file, "wb") as f:
         f.write(resp.content)
 
+    return target_file
+
 
 def get_filename(resp: Response, default_filename="unkown_filename") -> str:
     """

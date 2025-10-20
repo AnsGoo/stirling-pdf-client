@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Optional, Any, Literal, List
+from typing import Optional, Literal, List
 from httpx import Client, Response
 from .utils import save_file
 from .mix import MixApi
@@ -26,7 +26,7 @@ class ConvertApi(MixApi):
         """
         self.__client = client
 
-    def url_to_pdf(self, urlInput: str, out_path: Path) -> str:
+    def url_to_pdf(self, urlInput: str, out_path: Path) -> Path:
         """
         将URL转换为PDF文件。
 
@@ -44,10 +44,14 @@ class ConvertApi(MixApi):
         resp: Response = self.__client.request(
             method="POST", url=url, data={"urlInput": urlInput}
         )
-        save_file(resp=resp, out_path=out_path)
-        return resp.text
+        return save_file(resp=resp, out_path=out_path)
 
-    def pdf_to_xml(self, file_input: Path, file_id: str) -> Any:
+    def pdf_to_xml(
+        self,
+        out_path: Path,
+        file_input: Optional[Path] = None,
+        file_id: Optional[str] = None,
+    ) -> Path:
         """
         将PDF文件转换为XML格式。
 
@@ -56,11 +60,13 @@ class ConvertApi(MixApi):
             file_id: 文件ID
 
         Returns:
-            Any: XML格式的转换结果
+            Path: 输出XML文件路径
 
         Raises:
             Exception: 如果服务器响应错误
         """
+        if file_input is None and file_id is None:
+            raise ValueError("file_input and file_id must be provided one of")
         url = "/api/v1/convert/pdf/xml"
         # 使用二进制模式打开文件，并使用上下文管理器自动关闭
         with open(file_input, "rb") as file:
@@ -70,7 +76,7 @@ class ConvertApi(MixApi):
             resp: Response = self.__client.request(
                 method="POST", url=url, data=data, files=files
             )
-            return resp.json()
+            return save_file(resp=resp, out_path=out_path)
 
     def pdf_to_word(
         self,
@@ -78,7 +84,7 @@ class ConvertApi(MixApi):
         file_input: Optional[Path],
         file_id: Optional[str] = None,
         output_format: Optional[str] = "doc",
-    ) -> str:
+    ) -> Path:
         """
         将PDF文件转换为Word文档。
 
@@ -89,7 +95,7 @@ class ConvertApi(MixApi):
             output_format: 输出格式（'doc'或'docx'）
 
         Returns:
-            str: HTTP状态码
+            Path: 输出文件路径
 
         Raises:
             ValueError: 如果file_input和file_id都未提供，或output_format不是'doc'或'docx'
@@ -113,10 +119,9 @@ class ConvertApi(MixApi):
         resp: Response = self.__client.request(
             method="POST", url=url, data=data, files=files
         )
-        save_file(resp=resp, out_path=out_path)
         if file:
             file.close()
-        return resp.status_code
+        return save_file(resp=resp, out_path=out_path)
 
     def advanced_pdf_conversion(
         self,
@@ -124,7 +129,7 @@ class ConvertApi(MixApi):
         file_input: Optional[Path] = None,
         file_id: Optional[str] = None,
         advanced_options: Optional[dict] = None,
-    ) -> str:
+    ) -> Path:
         """
         高级PDF转换功能（仅在服务器版本 >= 2.0.0 时可用）。
 
@@ -138,7 +143,7 @@ class ConvertApi(MixApi):
             advanced_options: 高级转换选项
 
         Returns:
-            操作结果消息
+            Path: 输出文件路径
         """
         if file_input is None and file_id is None:
             raise ValueError("file_input and file_id must be provided one of")
@@ -159,12 +164,10 @@ class ConvertApi(MixApi):
             method="POST", url=url, data=data, files=files
         )
 
-        save_file(resp=resp, out_path=out_path)
-
         if file:
             file.close()
 
-        return resp.text
+        return save_file(resp=resp, out_path=out_path)
 
     def pdf_to_text(
         self,
@@ -172,7 +175,7 @@ class ConvertApi(MixApi):
         file_input: Optional[Path],
         file_id: Optional[str] = None,
         output_format: Optional[str] = "rtf",
-    ) -> str:
+    ) -> Path:
         """
         将PDF文件转换为文本文件。
 
@@ -183,7 +186,7 @@ class ConvertApi(MixApi):
             output_format: 输出格式
 
         Returns:
-            str: HTTP状态码
+            Path: 输出文件路径
 
         Raises:
             ValueError: 如果file_input和file_id都未提供
@@ -201,10 +204,9 @@ class ConvertApi(MixApi):
         resp: Response = self.__client.request(
             method="POST", url=url, data=data, files=files
         )
-        save_file(resp=resp, out_path=out_path)
         if file:
             file.close()
-        return resp.status_code
+        return save_file(resp=resp, out_path=out_path)
 
     def pdf_to_presentation(
         self,
@@ -212,7 +214,7 @@ class ConvertApi(MixApi):
         file_input: Optional[Path],
         file_id: Optional[str] = None,
         output_format: Optional[str] = "ppt",
-    ) -> str:
+    ) -> Path:
         """
         将PDF文件转换为演示文稿。
 
@@ -223,7 +225,7 @@ class ConvertApi(MixApi):
             output_format: 输出格式（'ppt'或'pptx'）
 
         Returns:
-            str: HTTP状态码
+            Path: 输出文件路径
 
         Raises:
             ValueError: 如果file_input和file_id都未提供，或output_format不是'ppt'或'pptx'
@@ -243,10 +245,9 @@ class ConvertApi(MixApi):
         resp: Response = self.__client.request(
             method="POST", url=url, data=data, files=files
         )
-        save_file(resp=resp, out_path=out_path)
         if file:
             file.close()
-        return resp.status_code
+        return save_file(resp=resp, out_path=out_path)
 
     def pdf_to_pdfa(
         self,
@@ -254,7 +255,7 @@ class ConvertApi(MixApi):
         file_input: Optional[Path],
         file_id: Optional[str] = None,
         output_format: Optional[str] = "pdfa",
-    ) -> str:
+    ) -> Path:
         """
         将PDF文件转换为PDF/A格式（长期保存格式）。
 
@@ -265,7 +266,7 @@ class ConvertApi(MixApi):
             output_format: 输出格式（'pdfa'或'pdfa-1'）
 
         Returns:
-            str: HTTP状态码
+            Path: 输出文件路径
 
         Raises:
             ValueError: 如果file_input和file_id都未提供，或output_format不是'pdfa'或'pdfa-1'
@@ -285,14 +286,13 @@ class ConvertApi(MixApi):
         resp: Response = self.__client.request(
             method="POST", url=url, data=data, files=files
         )
-        save_file(resp=resp, out_path=out_path)
         if file:
             file.close()
-        return resp.status_code
+        return save_file(resp=resp, out_path=out_path)
 
     def pdf_to_markdown(
         self, out_path: Path, file_input: Optional[Path], file_id: Optional[str] = None
-    ) -> str:
+    ) -> Path:
         """
         将PDF文件转换为Markdown格式。
 
@@ -302,7 +302,7 @@ class ConvertApi(MixApi):
             file_id: 替代文件输入的文件ID
 
         Returns:
-            str: HTTP状态码
+            Path: 输出文件路径
 
         Raises:
             ValueError: 如果file_input和file_id都未提供
@@ -320,10 +320,9 @@ class ConvertApi(MixApi):
         resp: Response = self.__client.request(
             method="POST", url=url, data=data, files=files
         )
-        save_file(resp=resp, out_path=out_path)
         if file:
             file.close()
-        return resp.status_code
+        return save_file(resp=resp, out_path=out_path)
 
     def pdf_to_img(
         self,
@@ -336,7 +335,7 @@ class ConvertApi(MixApi):
         color_type: Literal["color", "greyscale", "blackwhite"] = "color",
         dpi: int = 300,
         include_annotations: Optional[bool] = False,
-    ) -> str:
+    ) -> Path:
         """
         将PDF文件转换为图像文件。
 
@@ -352,7 +351,7 @@ class ConvertApi(MixApi):
             include_annotations: 是否包含注释
 
         Returns:
-            str: HTTP状态码
+            Path: 输出文件路径
 
         Raises:
             ValueError: 如果file_input和file_id都未提供
@@ -378,14 +377,13 @@ class ConvertApi(MixApi):
         resp: Response = self.__client.request(
             method="POST", url=url, data=data, files=files
         )
-        save_file(resp=resp, out_path=out_path)
         if file:
             file.close()
-        return resp.status_code
+        return save_file(resp=resp, out_path=out_path)
 
     def pdf_to_html(
         self, out_path: Path, file_input: Optional[Path], file_id: Optional[str] = None
-    ) -> str:
+    ) -> Path:
         """
         将PDF文件转换为HTML格式。
 
@@ -395,7 +393,7 @@ class ConvertApi(MixApi):
             file_id: 替代文件输入的文件ID
 
         Returns:
-            str: HTTP状态码
+            Path: 输出文件路径
 
         Raises:
             ValueError: 如果file_input和file_id都未提供
@@ -413,10 +411,9 @@ class ConvertApi(MixApi):
         resp: Response = self.__client.request(
             method="POST", url=url, data=data, files=files
         )
-        save_file(resp=resp, out_path=out_path)
         if file:
             file.close()
-        return resp.status_code
+        return save_file(resp=resp, out_path=out_path)
 
     def pdf_to_csv(
         self,
@@ -424,7 +421,7 @@ class ConvertApi(MixApi):
         file_input: Optional[Path],
         file_id: Optional[str] = None,
         page_numbers: str = "all",
-    ) -> str:
+    ) -> Path:
         """
         将PDF文件转换为CSV格式。
 
@@ -435,7 +432,7 @@ class ConvertApi(MixApi):
             page_numbers: 要转换的页码范围
 
         Returns:
-            str: HTTP状态码
+            Path: 输出文件路径
 
         Raises:
             ValueError: 如果file_input和file_id都未提供
@@ -453,12 +450,11 @@ class ConvertApi(MixApi):
         resp: Response = self.__client.request(
             method="POST", url=url, data=data, files=files
         )
-        save_file(resp=resp, out_path=out_path)
         if file:
             file.close()
-        return resp.status_code
+        return save_file(resp=resp, out_path=out_path)
 
-    def markdown_to_pdf(self, out_path: Path, file_input: Path) -> str:
+    def markdown_to_pdf(self, out_path: Path, file_input: Path) -> Path:
         """
         将Markdown文件转换为PDF格式。
 
@@ -467,7 +463,7 @@ class ConvertApi(MixApi):
             file_input: Markdown文件路径
 
         Returns:
-            str: HTTP状态码
+            Path: 输出文件路径
 
         Raises:
             Exception: 如果服务器响应错误
@@ -477,10 +473,9 @@ class ConvertApi(MixApi):
         file = open(file_input, "rb")
         files = {"fileInput": file}
         resp: Response = self.__client.request(method="POST", url=url, files=files)
-        save_file(resp=resp, out_path=out_path)
         if file:
             file.close()
-        return resp.status_code
+        return save_file(resp=resp, out_path=out_path)
 
     def img_to_pdf(
         self,
@@ -491,7 +486,7 @@ class ConvertApi(MixApi):
         ] = "fillPage",
         color_type: Literal["color", "greyscale", "blackwhite"] = "color",
         auto_rotate: Optional[bool] = False,
-    ) -> str:
+    ) -> Path:
         """
         将图像文件转换为PDF格式。
 
@@ -503,7 +498,7 @@ class ConvertApi(MixApi):
             auto_rotate: 是否自动旋转
 
         Returns:
-            str: HTTP状态码
+            Path: 输出文件路径
 
         Raises:
             Exception: 如果服务器响应错误
@@ -526,14 +521,12 @@ class ConvertApi(MixApi):
         resp: Response = self.__client.request(
             method="POST", url=url, files=files, data=data
         )
-        save_file(resp=resp, out_path=out_path)
-
         # 确保所有文件都被关闭
         for file in opened_files:
             if not file.closed:
                 file.close()
 
-        return resp.status_code
+        return save_file(resp=resp, out_path=out_path)
 
     def html_to_pdf(
         self,
@@ -541,7 +534,7 @@ class ConvertApi(MixApi):
         file_input: Optional[Path] = None,
         file_id: Optional[str] = None,
         zoom: Optional[float] = 1.0,
-    ) -> str:
+    ) -> Path:
         """
         将HTML文件转换为PDF格式。
 
@@ -552,7 +545,7 @@ class ConvertApi(MixApi):
             zoom: 缩放比例
 
         Returns:
-            str: HTTP状态码
+            Path: 输出文件路径
 
         Raises:
             ValueError: 如果file_input和file_id都未提供
@@ -568,12 +561,12 @@ class ConvertApi(MixApi):
         resp: Response = self.__client.request(
             method="POST", url=url, files=files, data=data
         )
-        save_file(resp=resp, out_path=out_path)
         if file:
             file.close()
-        return resp.status_code
 
-    def file_to_pdf(self, out_path: Path, file_input: Path) -> str:
+        return save_file(resp=resp, out_path=out_path)
+
+    def file_to_pdf(self, out_path: Path, file_input: Path) -> Path:
         """
         将各种文件格式转换为PDF。
 
@@ -582,7 +575,7 @@ class ConvertApi(MixApi):
             file_input: 输入文件路径
 
         Returns:
-            str: HTTP状态码
+            Path: 输出文件路径
 
         Raises:
             Exception: 如果服务器响应错误
@@ -592,10 +585,9 @@ class ConvertApi(MixApi):
         files = {"fileInput": file}
 
         resp: Response = self.__client.request(method="POST", url=url, files=files)
-        save_file(resp=resp, out_path=out_path)
         if file:
             file.close()
-        return resp.status_code
+        return save_file(resp=resp, out_path=out_path)
 
     def eml_to_pdf(
         self,
@@ -606,7 +598,7 @@ class ConvertApi(MixApi):
         max_attachment_size_mb: Optional[int] = 10,
         download_html: Optional[bool] = False,
         include_all_recipients: Optional[bool] = True,
-    ) -> str:
+    ) -> Path:
         """
         将EML邮件文件转换为PDF格式。
 
@@ -620,7 +612,7 @@ class ConvertApi(MixApi):
             include_all_recipients: 是否包含所有收件人
 
         Returns:
-            str: HTTP状态码
+            Path: 输出文件路径
 
         Raises:
             ValueError: 如果file_input和file_id都未提供
@@ -643,7 +635,6 @@ class ConvertApi(MixApi):
         resp: Response = self.__client.request(
             method="POST", url=url, files=files, data=data
         )
-        save_file(resp=resp, out_path=out_path)
         if file:
             file.close()
-        return resp.status_code
+        return save_file(resp=resp, out_path=out_path)

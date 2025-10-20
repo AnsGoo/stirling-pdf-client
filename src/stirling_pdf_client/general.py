@@ -103,7 +103,7 @@ class GeneralApi(MixApi):
         file_input: Optional[Path] = None,
         file_id: Optional[str] = None,
         options: SplitPdfBySectionsOptions = SplitPdfBySectionsOptions(),
-    ) -> str:
+    ) -> Path:
         """
         按部分分割PDF文件。
 
@@ -114,7 +114,7 @@ class GeneralApi(MixApi):
             options: 分割选项
 
         Returns:
-            str: 操作结果消息
+            Path: 输出文件路径
 
         Raises:
             ValueError: 如果file_input和file_id都未提供
@@ -143,8 +143,7 @@ class GeneralApi(MixApi):
         )
         if file_input is not None:
             file.close()
-        save_file(resp=resp, out_path=out_path)
-        return resp.text
+        return save_file(resp=resp, out_path=out_path)
 
     def split_pdf_by_chapters(
         self,
@@ -152,7 +151,7 @@ class GeneralApi(MixApi):
         file_input: Optional[Path] = None,
         file_id: Optional[str] = None,
         options: SplitPdfByChaptersOptions = SplitPdfByChaptersOptions(),
-    ) -> str:
+    ) -> Path:
         """
         按章节分割PDF文件。
 
@@ -163,7 +162,7 @@ class GeneralApi(MixApi):
             options: 分割选项
 
         Returns:
-            str: 操作结果消息
+            Path: 输出文件路径
 
         Raises:
             ValueError: 如果file_input和file_id都未提供
@@ -192,8 +191,7 @@ class GeneralApi(MixApi):
         )
         if file_input is not None:
             file.close()
-        save_file(resp=resp, out_path=out_path)
-        return resp.text
+        return save_file(resp=resp, out_path=out_path)
 
     def split_pages(
         self,
@@ -201,7 +199,7 @@ class GeneralApi(MixApi):
         file_input: Optional[Path] = None,
         file_id: Optional[str] = None,
         page_numbers: str = "all",
-    ) -> str:
+    ) -> Path:
         """
         分割PDF文件的页面。
 
@@ -212,7 +210,7 @@ class GeneralApi(MixApi):
             page_numbers: 要分割的页码范围
 
         Returns:
-            str: 操作结果消息
+            Path: 输出文件路径
 
         Raises:
             ValueError: 如果file_input和file_id都未提供
@@ -239,8 +237,7 @@ class GeneralApi(MixApi):
         )
         if file_input is not None:
             file.close()
-        save_file(resp=resp, out_path=out_path)
-        return resp.text
+        return save_file(resp=resp, out_path=out_path)
 
     def split_by_size_or_count(
         self,
@@ -249,7 +246,7 @@ class GeneralApi(MixApi):
         file_id: Optional[str] = None,
         split_type: Literal["size", "page", "document"] = "size",
         split_value: str = "10MB",
-    ) -> str:
+    ) -> Path:
         """
         按大小或页数分割PDF文件。
 
@@ -261,7 +258,7 @@ class GeneralApi(MixApi):
             split_value: 分割值
 
         Returns:
-            str: 操作结果消息
+            Path: 输出文件路径
 
         Raises:
             ValueError: 如果file_input和file_id都未提供
@@ -291,8 +288,7 @@ class GeneralApi(MixApi):
         )
         if file is not None:
             file.close()
-        save_file(resp=resp, out_path=out_path)
-        return resp.text
+        return save_file(resp=resp, out_path=out_path)
 
     def scale_page(
         self,
@@ -303,7 +299,7 @@ class GeneralApi(MixApi):
             "A0", "A1", "A2", "A3", "A4", "A5", "A6", "LETTER", "LEGAL", "KEEP"
         ] = "A4",
         scale_factor: float = 1.0,
-    ) -> str:
+    ) -> Path:  
         """
         缩放PDF页面大小。
 
@@ -315,7 +311,7 @@ class GeneralApi(MixApi):
             scale_factor: 缩放因子
 
         Returns:
-            str: 操作结果消息
+            Path: 输出文件路径
 
         Raises:
             ValueError: 如果file_input和file_id都未提供
@@ -343,8 +339,7 @@ class GeneralApi(MixApi):
         )
         if file_input is not None:
             file.close()
-        save_file(resp=resp, out_path=out_path)
-        return resp.text
+        return save_file(resp=resp, out_path=out_path)
 
     def rotate_page(
         self,
@@ -352,7 +347,7 @@ class GeneralApi(MixApi):
         file_input: Optional[Path] = None,
         file_id: Optional[str] = None,
         angle: Literal[0, 90, 180, 270] = 90,
-    ) -> str:
+    ) -> Path:
         """
         旋转PDF页面。
 
@@ -363,7 +358,7 @@ class GeneralApi(MixApi):
             angle: 旋转角度
 
         Returns:
-            str: 操作结果消息
+            Path: 输出文件路径
 
         Raises:
             ValueError: 如果file_input和file_id都未提供
@@ -390,8 +385,7 @@ class GeneralApi(MixApi):
         )
         if file_input is not None:
             file.close()
-        save_file(resp=resp, out_path=out_path)
-        return resp.text
+        return save_file(resp=resp, out_path=out_path)
 
     def remove_pages(
         self,
@@ -399,7 +393,7 @@ class GeneralApi(MixApi):
         file_input: Optional[Path] = None,
         file_id: Optional[str] = None,
         page_numbers: str = "all",
-    ) -> str:
+    ) -> Path:
         """
         从PDF文件中删除页面。
 
@@ -410,7 +404,7 @@ class GeneralApi(MixApi):
             page_numbers: 要删除的页码范围
 
         Returns:
-            str: 操作结果消息
+            Path: 输出文件路径
 
         Raises:
             ValueError: 如果file_input和file_id都未提供
@@ -437,15 +431,14 @@ class GeneralApi(MixApi):
         )
         if file_input is not None:
             file.close()
-        save_file(resp=resp, out_path=out_path)
-        return resp.text
+        return save_file(resp=resp, out_path=out_path)
 
     def remove_image_pdf(
         self,
         out_path: Path,
         file_input: Optional[Path] = None,
         file_id: Optional[str] = None,
-    ) -> str:
+    ) -> Path:
         """
         从PDF文件中删除所有图像。
 
@@ -455,7 +448,7 @@ class GeneralApi(MixApi):
             file_id: 替代文件输入的文件ID
 
         Returns:
-            str: 操作结果消息
+            Path: 输出文件路径
 
         Raises:
             ValueError: 如果file_input和file_id都未提供
@@ -477,8 +470,7 @@ class GeneralApi(MixApi):
         )
         if file_input is not None:
             file.close()
-        save_file(resp=resp, out_path=out_path)
-        return resp.text
+        return save_file(resp=resp, out_path=out_path)
 
     def rearrange_page(
         self,
@@ -499,7 +491,7 @@ class GeneralApi(MixApi):
             "REMOVE_FIRST_AND_LAST",
             "DUPLICATE",
         ] = "CUSTOM",
-    ) -> str:
+    ) -> Path:
         """
         重新排列PDF页面顺序。
 
@@ -511,7 +503,7 @@ class GeneralApi(MixApi):
             custom_mode: 自定义模式
 
         Returns:
-            str: 操作结果消息
+            Path: 输出文件路径
 
         Raises:
             ValueError: 如果file_input和file_id都未提供
@@ -539,15 +531,14 @@ class GeneralApi(MixApi):
         )
         if file_input is not None:
             file.close()
-        save_file(resp=resp, out_path=out_path)
-        return resp.text
+        return save_file(resp=resp, out_path=out_path)
 
     def pdf_to_single_page(
         self,
         out_path: Path,
         file_input: Optional[Path] = None,
         file_id: Optional[str] = None,
-    ) -> str:
+    ) -> Path:
         """
         将PDF转换为单页文件。
 
@@ -557,7 +548,7 @@ class GeneralApi(MixApi):
             file_id: 替代文件输入的文件ID
 
         Returns:
-            str: 操作结果消息
+            Path: 输出文件路径
 
         Raises:
             ValueError: 如果file_input和file_id都未提供
@@ -579,8 +570,7 @@ class GeneralApi(MixApi):
         )
         if file_input is not None:
             file.close()
-        save_file(resp=resp, out_path=out_path)
-        return resp.text
+        return save_file(resp=resp, out_path=out_path)
 
     def overlay_pdfs(
         self,
@@ -588,7 +578,7 @@ class GeneralApi(MixApi):
         options: OverlayPdfOptions,
         file_input: Optional[Path] = None,
         file_id: Optional[str] = None,
-    ) -> str:
+    ) -> Path:
         """
         在PDF文件上叠加其他PDF文件。
 
@@ -599,7 +589,7 @@ class GeneralApi(MixApi):
             file_id: 替代文件输入的文件ID
 
         Returns:
-            str: 操作结果消息
+            Path: 输出文件路径
 
         Raises:
             ValueError: 如果file_input和file_id都未提供
@@ -631,7 +621,7 @@ class GeneralApi(MixApi):
         if overlay_files:
             for f in overlay_files:
                 f.close()
-        return resp.text
+        return out_path
 
     def merge_pdfs(
         self,
@@ -646,7 +636,7 @@ class GeneralApi(MixApi):
         ] = "orderProvided",
         remove_cert_sign: bool = True,
         generate_toc: Optional[bool] = None,
-    ) -> str:
+    ) -> Path:
         """
         合并多个PDF文件。
 
@@ -658,7 +648,7 @@ class GeneralApi(MixApi):
             generate_toc: 是否生成目录
 
         Returns:
-            str: 操作结果消息
+            Path: 输出文件路径
 
         Raises:
             Exception: 如果服务器响应错误
@@ -677,12 +667,11 @@ class GeneralApi(MixApi):
         resp: Response = self.__client.request(
             method="POST", url=url, data=data, files=files
         )
-        save_file(resp=resp, out_path=out_path)
         for f in file_inputs:
             f.close()
-        return resp.text
+        return save_file(resp=resp, out_path=out_path)
 
-    def extract_bookmarks(self, out_path: Path, file: Path) -> str:
+    def extract_bookmarks(self, out_path: Path, file: Path) -> Path:
         """
         从PDF文件中提取书签。
 
@@ -691,7 +680,7 @@ class GeneralApi(MixApi):
             file: PDF文件路径
 
         Returns:
-            str: 操作结果消息
+            Path: 输出文件路径
 
         Raises:
             Exception: 如果服务器响应错误
@@ -704,8 +693,7 @@ class GeneralApi(MixApi):
         resp: Response = self.__client.request(method="POST", url=url, files=files)
         if file_handle is not None:
             file_handle.close()
-        save_file(resp=resp, out_path=out_path)
-        return resp.text
+        return save_file(resp=resp, out_path=out_path)
 
     def crop(
         self,
@@ -713,7 +701,7 @@ class GeneralApi(MixApi):
         file_input: Optional[Path] = None,
         file_id: Optional[str] = None,
         options: CropBox = CropBox(),
-    ) -> str:
+    ) -> Path:
         """
         裁剪PDF页面。
 
@@ -724,7 +712,7 @@ class GeneralApi(MixApi):
             options: 裁剪框选项
 
         Returns:
-            str: 操作结果消息
+            Path: 输出文件路径
 
         Raises:
             ValueError: 如果file_input和file_id都未提供
@@ -757,5 +745,4 @@ class GeneralApi(MixApi):
         )
         if file_input is not None:
             files["fileInput"].close()
-        save_file(resp=resp, out_path=out_path)
-        return resp.text
+        return save_file(resp=resp, out_path=out_path)

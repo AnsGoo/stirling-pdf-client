@@ -35,7 +35,7 @@ class FilterApi(MixApi):
         standard_page_size: Literal[
             "A0", "A1", "A2", "A3", "A4", "A5", "A6", "LETTER", "LEGAL"
         ] = "A4",
-    ) -> Path:  
+    ) -> Path:
         """
         按页面大小过滤PDF文件。
 
@@ -47,7 +47,7 @@ class FilterApi(MixApi):
             standard_page_size: 标准页面大小
 
         Returns:
-            Path: 输出文件路径  
+            Path: 输出文件路径
 
         Raises:
             ValueError: 如果file_input和file_id都未提供
@@ -68,7 +68,7 @@ class FilterApi(MixApi):
         )
         if file_input is not None:
             files["fileInput"].close()
-            
+
         return save_file(resp=resp, out_path=out_path)
 
     def filter_page_rotation(
@@ -78,7 +78,7 @@ class FilterApi(MixApi):
         file_id: Optional[str] = None,
         comparator: Literal["Greater", "Equal", "Less"] = "Greater",
         rotation: int = 0,
-    ) -> Path:  
+    ) -> Path:
         """
         按页面旋转角度过滤PDF文件。
 
@@ -90,7 +90,7 @@ class FilterApi(MixApi):
             rotation: 旋转角度
 
         Returns:
-            Path: 输出文件路径  
+            Path: 输出文件路径
 
         Raises:
             ValueError: 如果file_input和file_id都未提供
@@ -120,7 +120,7 @@ class FilterApi(MixApi):
         file_id: Optional[str] = None,
         comparator: Literal["Greater", "Equal", "Less"] = "Greater",
         page_count: int = 0,
-    ) -> Path:  
+    ) -> Path:
         """
         按页数过滤PDF文件。
 
@@ -132,7 +132,7 @@ class FilterApi(MixApi):
             page_count: 页数
 
         Returns:
-            Path: 输出文件路径  
+            Path: 输出文件路径
 
         Raises:
             ValueError: 如果file_input和file_id都未提供
@@ -162,7 +162,7 @@ class FilterApi(MixApi):
         file_id: Optional[str] = None,
         comparator: Literal["Greater", "Equal", "Less"] = "Greater",
         file_size: int = 0,
-    ) -> Path:  
+    ) -> Path:
         """
         按文件大小过滤PDF文件。
 
@@ -174,7 +174,7 @@ class FilterApi(MixApi):
             file_size: 文件大小
 
         Returns:
-            Path: 输出文件路径  
+            Path: 输出文件路径
 
         Raises:
             ValueError: 如果file_input和file_id都未提供
@@ -204,7 +204,7 @@ class FilterApi(MixApi):
         file_input: Optional[Path] = None,
         file_id: Optional[str] = None,
         page_numbers: str = "all",
-    ) -> Path:  
+    ) -> Path:
         """
         按包含的文本内容过滤PDF文件。
 
@@ -216,7 +216,7 @@ class FilterApi(MixApi):
             page_numbers: 页码范围
 
         Returns:
-            Path: 输出文件路径  
+            Path: 输出文件路径
 
         Raises:
             ValueError: 如果file_input和file_id都未提供
@@ -245,7 +245,7 @@ class FilterApi(MixApi):
         file_input: Optional[Path] = None,
         file_id: Optional[str] = None,
         page_numbers: str = "all",
-    ) -> Path:  
+    ) -> Path:
         """
         按包含的图像内容过滤PDF文件。
 

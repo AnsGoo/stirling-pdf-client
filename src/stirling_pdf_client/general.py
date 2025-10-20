@@ -299,7 +299,7 @@ class GeneralApi(MixApi):
             "A0", "A1", "A2", "A3", "A4", "A5", "A6", "LETTER", "LEGAL", "KEEP"
         ] = "A4",
         scale_factor: float = 1.0,
-    ) -> Path:  
+    ) -> Path:
         """
         缩放PDF页面大小。
 

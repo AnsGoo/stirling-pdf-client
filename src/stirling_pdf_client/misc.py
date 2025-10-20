@@ -250,7 +250,7 @@ class MiscApi(MixApi):
         resp: Response = self.__client.request(
             method="POST", url=url, data=data, files=files
         )
-        
+
         if file:
             file.close()
         return save_file(resp=resp, out_path=out_path)
@@ -612,7 +612,7 @@ class MiscApi(MixApi):
             allow_duplicates: 是否允许重复图像
 
         Returns:
-            Path: 输出文件路径      
+            Path: 输出文件路径
 
         Raises:
             ValueError: 如果file_input和file_id都未提供
@@ -646,7 +646,7 @@ class MiscApi(MixApi):
         min_area: Optional[int] = 8000,
         min_contour_area: Optional[int] = 500,
         border_size: Optional[int] = 1,
-    ) -> Path:  
+    ) -> Path:
         """
         从PDF文件中提取扫描图像。
 
@@ -660,7 +660,7 @@ class MiscApi(MixApi):
             border_size: 边框大小
 
         Returns:
-            Path: 输出文件路径  
+            Path: 输出文件路径
 
         Raises:
             Exception: 如果服务器响应错误
